@@ -8,8 +8,9 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
+Plugin 'tpope/vim-abolish'
 Plugin 'dyng/ctrlsf.vim'
-" Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'tommcdo/vim-exchange'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'Shougo/vimproc.vim'
 Plugin 'tpope/vim-rvm'
@@ -20,19 +21,15 @@ Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-repeat'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'docunext/closetag.vim'
-" Plugin 'tpope/vim-unimpaired'
 Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'ivalkeen/vim-ctrlp-tjump'
 Plugin 'chun-yang/vim-action-ag'
 Plugin 'easymotion/vim-easymotion'
-" Plugin 'valloric/youCompleteMe'
-" Plugin 'altercation/vim-colors-solarized'
 Plugin 'nanotech/jellybeans.vim'
 Plugin 'rking/ag.vim'
-" Plugin 'mileszs/ack.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'bling/vim-airline'
-" Plugin 'bling/vim-bufferline'
-Plugin 'jeetsukumaran/vim-buffergator'
+" Plugin 'jeetsukumaran/vim-buffergator'
 Plugin 'tpope/vim-projectionist'
 Plugin 'tpope/vim-dispatch'
 Plugin 'majutsushi/tagbar'
@@ -41,38 +38,19 @@ Plugin 'mbbill/undotree'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'othree/html5.vim'
 Plugin 'digitaltoad/vim-jade'
-" Plugin 'tmatilai/vim-monit'
 Plugin 'ervandew/supertab'
-" Plugin 'jpalardy/vim-slime'
 Plugin 'Matt-Deacalion/vim-systemd-syntax'
 Plugin 'editorconfig/editorconfig-vim'
-" Plugin 'fatih/vim-go'
-" Plugin 'jimenezrick/vimerl'
-" Plugin 'wting/rust.vim'
-" Plugin 'cespare/vim-toml'
-" Plugin 'facebook/vim-flow'
-
-" Plugin 'eagletmt/ghcmod-vim'
-" Plugin 'raichoo/haskell-vim'
-
+Plugin 'stefanoverna/vim-i18n'
 Plugin 'elzr/vim-json'
-" Plugin 'vim-scripts/JavaScript-Indent'
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'moll/vim-node'
 Plugin 'mattn/emmet-vim'
-
-" Plugin 'xolox/vim-misc'
-" Plugin 'xolox/vim-easytags'
-
 Plugin 'Valloric/MatchTagAlways'
-
 Plugin 'plasticboy/vim-markdown'
-" Plugin 'greyblake/vim-preview'
-
-" Plugin 'tpope/vim-haml'
-" Plugin 'tpope/vim-git'
-
+Plugin 'tpope/vim-haml'
+Plugin 'nono/vim-handlebars'
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-bundler'
@@ -82,72 +60,103 @@ Plugin 'tpope/vim-endwise'
 Plugin 'christoomey/vim-tmux-runner'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'scrooloose/syntastic'
-
-" Plugin 'Shougo/neocomplete.vim'
-" Plugin 'Shougo/neosnippet'
-" Plugin 'Shougo/neosnippet-snippets'
-" Plugin 'Shougo/vimshell.vim'
-
-" Plugin 'chase/vim-ansible-yaml'
-
-" Plugin 'guns/vim-clojure-static'
-" Plugin 'tpope/vim-leiningen'
-" Plugin 'tpope/vim-classpath'
-" Plugin 'tpope/vim-fireplace'
-" Plugin 'kien/rainbow_parentheses.vim'
-" Plugin 'vim-scripts/paredit.vim'
-" Plugin 'wlangstroth/vim-racket'
-
 Plugin 'chrisbra/csv.vim'
-" Plugin 'dotcloud/docker', {'rtp': 'contrib/syntax/vim'}
-" Plugin 'nginx/nginx', {'rtp': 'contrib/vim'}
+Plugin 'keith/swift.vim'
 
 call vundle#end()
 filetype plugin indent on
 
-" # Basic settings
-" set mouse=a
-set cursorline
-set hidden
-set nowrap
-"set modelines=0
-" set clipboard=unnamed
-"set synmaxcol=128
-"set ttyscroll=10
-"set encoding=utf-8
-"set nowritebackup
+" General configurations
+"------------------------
+
+set nocompatible                " Don't maintain compat with Vi.
+set hidden                      " Allow buffer change w/o saving
+set autoread                    " Load file from disk, ie for git reset
+set nocompatible		            " Not concerned with vi compatibility
+set lazyredraw                  " Don't update while executing macros
+set backspace=indent,eol,start	" Sane backspace behavior
+set history=1000  		          " Remember last 1000 commands
+set scrolloff=4                 " Keep at least 4 lines below cursor
+set expandtab                   " Convert <tab> to spaces (2 or 4)
+set tabstop=2                   " Two spaces per tab as default
+set shiftwidth=2                "     then override with per filteype
+set softtabstop=2               "     specific settings via autocmd
+set secure                      " Limit what modelines and autocmds can do
+set autowrite                   " write for me when I take any action
+
+set relativenumber
+if v:version > 703
+  set number " hybrid relative and absolute for current line
+endif
+
+function! Numbertoggle()
+  if exists('+relativenumber')
+    setl rnu!
+  else
+    setl nu!
+  endif
+endfunction
+nnoremap <f12> :call Numbertoggle()<cr>
+
+" Disable sound/visual bell on errors
+" May need additional config about audible bell
+set t_vb=
+
+" Set modeline to 1 to allow rcfiles to be recognized as vim files
+set modelines=1
+
+" I save constantly and hate swap files in my prject dirs
+set nobackup
+set nowritebackup
+set noswapfile
+
+" Persistent undo
+let undodir = expand('~/.undo-vim')
+if !isdirectory(undodir)
+  call mkdir(undodir)
+endif
+set undodir=~/.undo-vim
+set undofile " Create FILE.un~ files for persistent undo
+"------------------------
+" End General configurations
+
+" Mappings for quick search & replace. Global set to default
+" Do a / search first, then leave pattern empty in :s// to use previous
+nnoremap <Leader>sub :%s///g<left><left>
+vnoremap <Leader>sub :s///g<left><left>
+nnoremap <leader>wub :%s//<C-r><C-w>/g<cr>
 
 nmap <leader>vr :sp $MYVIMRC<cr>
 nmap <leader>so :source $MYVIMRC<cr>
 
-map <C-a> <esc>:w<cr>
+nnoremap <silent> <leader><leader>  <esc>:w<cr>
 
-" Tmux runner
-let g:VtrUseVtrMaps = 1
-let g:VtrGitCdUpOnOpen = 0
-let g:VtrPercentage = 30
+" tmux runner
+let g:vtrusevtrmaps = 1
+let g:vtrgitcduponopen = 0
+let g:vtrpercentage = 30
 
-" nmap <leader>fs :VtrFlushCommand<cr>:VtrSendCommandToRunner<cr>
-" nmap <C-f> :VtrSendLinesToRunner<cr>
-" vmap <C-f> :VtrSendLinesToRunner<cr>
+" nmap <leader>fs :vtrflushcommand<cr>:vtrsendcommandtorunner<cr>
+" nmap <c-f> :vtrsendlinestorunner<cr>
+" vmap <c-f> :vtrsendlinestorunner<cr>
 
-" nmap <leader>osr :VtrOpenRunner { 'orientation': 'h', 'percentage': 50 }<cr>
-" nmap <leader>opr :VtrOpenRunner { 'orientation': 'h', 'percentage': 50, 'cmd': 'pry'  }<cr>
+" nmap <leader>osr :vtropenrunner { 'orientation': 'h', 'percentage': 50 }<cr>
+" nmap <leader>opr :vtropenrunner { 'orientation': 'h', 'percentage': 50, 'cmd': 'pry'  }<cr>
 
-" nnoremap <leader>sd :VtrSendCtrlD<cr>
-" nnoremap <leader>sq :VtrSendCommandToRunner q<cr>
-" nnoremap <leader>sl :VtrSendCommandToRunner <cr>
-" nnoremap <leader>scu :VtrSendCommandToRunner <cr>
+" nnoremap <leader>sd :vtrsendctrld<cr>
+" nnoremap <leader>sq :vtrsendcommandtorunner q<cr>
+" nnoremap <leader>sl :vtrsendcommandtorunner <cr>
+" nnoremap <leader>scu :vtrsendcommandtorunner <cr>
 
 " let g:vtr_filetype_runner_overrides = {
 "   \ 'haskell': 'ghci {file}',
 "   \ 'applescript': 'osascript {file}'
 "   \ }
 
-let g:spec_runner_dispatcher = "VtrSendCommand! be {command}"
+let g:spec_runner_dispatcher = "vtrsendcommand! be {command}"
 
-map <leader>rt <Plug>RunFocusedSpec
-" map <leader>lt <Plug>RunMostRecentSpec# Clipboard
+map <leader>rt <plug>runfocusedspec
+" map <leader>lt <plug>runmostrecentspec# clipboard
 
 " macos vs linux clipboard
 if has("mac")
@@ -156,62 +165,38 @@ else
   set clipboard=unnamedplus
 endif
 
-" # Number settings
-
-" set relativenumber
-set number
-function! NumberToggle()
-  if exists('+relativenumber')
-    setl rnu!
-  else
-    setl nu!
-  endif
-endfunc
-nnoremap <F12> :call NumberToggle()<cr>
 
 " backup/persistance settings
-set undodir=$HOME/.vim/tmp/undo//
-set backupdir=$HOME/.vim/tmp/backup//
-set directory=$HOME/.vim/tmp/swap//
-set backupskip=/tmp/*,/private/tmp/*"
-set backup
-set writebackup
-set noswapfile
+" set backupdir=$home/.vim/tmp/backup//
+" set directory=$home/.vim/tmp/swap//
+" set backupskip=/tmp/*,/private/tmp/*"
+" set backup
+" set writebackup
 
-"set nobackup
 set hlsearch
 set ignorecase
 set smartcase
-set tabstop=2
-set shiftwidth=2
-set expandtab
 set wrap
 set linebreak
 let &showbreak = '↳ '
 set breakindent
 set breakindentopt=sbr
 set list
-" Shortcut to rapidly toggle `set list`
-nmap <leader>l :set list!<CR>
+" shortcut to rapidly toggle `set list`
+nmap <leader>l :set list!<cr>
 
-" Use the same symbols as TextMate for tabstops and EOLs
+nmap <leader>oh :syntax off<cr>
+
+" use the same symbols as textmate for tabstops and eols
 set listchars=tab:>·,eol:¬,trail:·
-highlight NonText guifg=#4a4a59
-highlight SpecialKey guifg=#4a4a59
-" set background=dark
-set t_Co=256
+highlight nontext guifg=#4a4a59
+highlight specialkey guifg=#4a4a59
+set t_co=256
 colorscheme jellybeans
 
-" map <Leader>rt :call RunCurrentSpecFile()<CR>
+syntax sync minlines=256
 
-" ================ Persistent Undo ==================
-" Keep undo history across sessions, by storing in file.
-" Only works all the time.
-if has('persistent_undo')
-  silent !mkdir ~/.vim/backups > /dev/null 2>&1
-  set undodir=~/.vim/backups
-  set undofile
-endif
+" map <leader>rt :call runcurrentspecfile()<cr>
 
 let g:jsx_ext_required = 0
 
@@ -219,7 +204,7 @@ let g:jsx_ext_required = 0
 
 let g:vim_json_syntax_conceal = 0
 
-" let g:acp_enableAtStartup = 0
+" let g:acp_enableatstartup = 0
 " let g:neocomplete#enable_at_startup = 1
 " let g:neocomplete#enable_smart_case = 1
 
@@ -232,15 +217,15 @@ let g:vim_json_syntax_conceal = 0
 " let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
 
-" Enable omni completion.
-" autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-" autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-" autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-" autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-" autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-" autocmd FileType ruby setlocal omnifunc=rubycomplete#CompleteTags
+" enable omni completion.
+" autocmd filetype css setlocal omnifunc=csscomplete#completecss
+" autocmd filetype html,markdown setlocal omnifunc=htmlcomplete#completetags
+" autocmd filetype javascript setlocal omnifunc=javascriptcomplete#completejs
+" autocmd filetype python setlocal omnifunc=pythoncomplete#complete
+" autocmd filetype xml setlocal omnifunc=xmlcomplete#completetags
+" autocmd filetype ruby setlocal omnifunc=rubycomplete#completetags
 
-let g:buffergator_viewport_split_policy = "B"
+let g:buffergator_viewport_split_policy = "b"
 let g:buffergator_sort_regime = "mru"
 
 let g:vim_markdown_folding_disabled = 1
@@ -259,20 +244,126 @@ nmap <F8> :TagbarToggle<CR>
 nnoremap <F5> :UndotreeToggle<cr>
 " export TERMINFO="$HOME/.terminfo"
 " Map ctrl-movement keys to window switching
-nnoremap <C-k> <C-w>K
-nnoremap <C-j> <C-w>J
-nnoremap <C-l> <C-w>L
-nnoremap <C-h> <C-w>H
+nnoremap <C-k> <C-w>k
+nnoremap <C-j> <C-w>j
+nnoremap <C-l> <C-w>l
+nnoremap <C-h> <C-w>h
 
 " Toggle paste mode
 nmap <silent> <F4> :set invpaste<CR>:set paste?<CR>
 imap <silent> <F4> <ESC>:set invpaste<CR>:set paste?<CR>
 
+" Use j/k to start, then scroll through autocomplete options
+inoremap <expr> <C-j> ((pumvisible())?("\<C-n>"):("\<C-x><c-n>"))
+inoremap <expr> <C-k> ((pumvisible())?("\<C-p>"):("\<C-x><c-k>"))
+
+" Do not use <Ctrl-c> to break out to normal mode
+" Use C-Space to Esc out of any mode
+nnoremap <C-Space> <Esc>:noh<CR>
+vnoremap <C-Space> <Esc>gV
+onoremap <C-Space> <Esc>
+cnoremap <C-Space> <C-c>
+inoremap <C-Space> <Esc>`^
+" Terminal sees <C-@> as <C-space> WTF, but ok
+nnoremap <C-@> <Esc>:noh<CR>
+vnoremap <C-@> <Esc>gV
+onoremap <C-@> <Esc>
+cnoremap <C-@> <C-c>
+inoremap <C-@> <Esc>`^
+
+" Easy re-sourcing of vimrc
+map <leader>sop :source %<cr>
+
+" Doesn't seem I'm going to win on this one
+command! W write
+
+function! CurrenRelativeDirectory()
+  let relative_dir = substitute(expand("%:p:h"), getcwd()."/", "", "")."/"
+  return escape(relative_dir, " ")
+endfunction
+
+" Easy navigation for editing and cding
+nnoremap <leader>rr :CtrlP <C-r>=CurrenRelativeDirectory()<cr><cr>
+nnoremap <leader>R :e <C-r>=CurrenRelativeDirectory()<cr>
+
+" Delete current file and current buffer
+" map <leader>fd :call "delete(expand('%')) | bdelete!"
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" RENAME CURRENT FILE (thanks Gary Bernhardt)
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+map <Leader>n :call RenameFile()<cr>
+
+"Make Y yank to end of line (like D, or C)
+nmap Y y$
+
+" Easy access to the start of the line
+nnoremap 0 ^
+
+" Leader-; to enter command mode. No more holding shift!
+nnoremap <leader>; :
+vnoremap <leader>; :
+
+" Quickly open a second window to view files side by side
+nmap <LEADER>vn :vsplit<CR>
+nmap <LEADER>vs :vsplit<CR>
+
+" Move one line at a time, aka 'fine ajdustment'
+" nnoremap j gj
+" nnoremap k gk
+
+" Reselect pasted text. Mnem: 'Get pasted'
+" nnoremap gp `[v`]
+
+" Go to position of last edit. Mnem: 'Go to Edit'
+nnoremap ge `.
+
+" Tabs configurations
+"------------------------
+
+for tab_number in [1,2,3,4, 5, 6]
+  execute 'map <silent> <C-w>' . tab_number . ' :tabnext ' . tab_number . '<cr>'
+endfor
+
+nnoremap <leader>wn :tabnew<cr>
+nnoremap <leader>ct :tabclose<cr>
+
+" Tags configurations
+"--------------------
+
+au FileType * call EnableTagNavMaps()
+
+function! EnableTagNavMaps()
+  if s:BufferIsTagNavigable()
+    nmap <buffer> <cr> <c-]>
+    nmap <buffer> <bs> <c-t>
+  endif
+endfunction
+
+let s:navigable_filetypes = ['vim', 'ruby', 'javascript', 'sh']
+
+function! s:BufferIsTagNavigable()
+  let is_navigable_filetype = index(s:navigable_filetypes, &filetype) != -1
+  let is_normal_buffer = &buftype !=? 'nofile'
+  return is_navigable_filetype && is_normal_buffer
+endfunction
+
+set tags+=./git/tags
+
 " format the entire file
 nnoremap <leader>fef :normal! gg=G``<CR>
 
 " set text wrapping toggles
-nmap <silent> <leader>tw :set invwrap<CR>:set wrap?<CR>
+" nmap <silent> <leader>tw :set invwrap<CR>:set wrap?<CR>
 
 " find merge conflict markers
 " nmap <silent> <leader>fc <ESC>/\v^[<=>]{7}( .*\|$)<CR>
@@ -280,10 +371,9 @@ nmap <silent> <leader>tw :set invwrap<CR>:set wrap?<CR>
 " upper/lower word
 nmap <leader>u mQviwU`Q
 nmap <leader>l mQviwu`Q
+map <Leader>nr :NERDTreeFind<CR>
 
-" nmap <silent> <leader><leader> :NERDTreeToggle<CR>
-" let g:ctrlp_map = '<leader-leader>'
-nnoremap <silent> <leader><leader> :CtrlP<CR>
+nmap <C-a> :NERDTreeToggle<CR>
 let NERDTreeQuitOnOpen=1
 let NERDTreeIgnore = ['\.pyc$']
 
@@ -296,12 +386,11 @@ cmap w!! %!sudo tee > /dev/null %
 
 " Allow to copy/paste between VIM instances
 " "copy the current visual selection to ~/.vbuf
-vmap <Leader>y :w! ~/.vbuf<CR>
+" vmap <Leader>y :w! ~/.vbuf<CR>
 " "copy the current line to the buffer file if no visual selection
-nmap <Leader>y :.w! ~/.vbuf<CR>
+" nmap <Leader>y :.w! ~/.vbuf<CR>
 " "paste the contents of the buffer file
-nmap <Leader>p :r ~/.vbuf<CR>
-nmap <Leader>r :NERDTreeFind<CR>
+" nmap <Leader>p :r ~/.vbuf<CR>
 nnoremap <Leader>, :CtrlSF<Space>
 
 " Automatically removing all trailing whitespace
@@ -318,111 +407,107 @@ if executable('ag')
 endif
 nmap <silent> <RIGHT> :cnext<CR>
 nmap <silent> <LEFT> :cprev<CR>
-map <C-J> :bn<cr>
-map <C-K> :bp<cr>
+" map <C-UP> :bn<cr>
+" map <C-DOWN> :bp<cr>
 map <Leader>x :bd<cr>
 set foldmethod=indent
 set foldnestmax=10
 set nofoldenable
 set foldlevel=1
 
-" inoremap ( ()<Esc>i
-" inoremap [ []<Esc>i
-" inoremap { {<CR>}<Esc>O
-" autocmd Syntax html,vim inoremap < <lt>><Esc>i| inoremap > <c-r>=ClosePair('>')<CR>
-" inoremap ) <c-r>=ClosePair(')')<CR>
-" inoremap ] <c-r>=ClosePair(']')<CR>
-" inoremap } <c-r>=CloseBracket()<CR>
-" inoremap " <c-r>=QuoteDelim('"')<CR>
-" inoremap ' <c-r>=QuoteDelim("'")<CR>
 
-" function! ClosePair(char)
-"  if getline('.')[col('.') - 1] == a:char
-"  return "\<Right>"
-"  else
-"  return a:char
-"  endif
-" endf
-
-" function! CloseBracket()
-"  if match(getline(line('.') + 1), '\s*}') < 0
-"  return "\<CR>}"
-"  else
-"  return "\<Esc>j0f}a"
-"  endif
-" endf
-
-" function! QuoteDelim(char)
-"  let line = getline('.')
-"  let col = col('.')
-"  if line[col - 2] == "\\"
-"  "Inserting a quoted quotation mark into the string
-"  return a:char
-"  elseif line[col - 1] == a:char
-"  "Escaping out of the string
-"  return "\<Right>"
-"  else
-"  "Starting a string
-"  return a:char.a:char."\<Esc>i"
-"  endif
-" endf
+" save session to home directory
 map <F2> :mksession! ~/vim_session <cr> " Quick write session with F2
 map <F3> :source ~/vim_session <cr>     " And load session with F3
-set autoread
+
 let g:ag_highlight=1
 if executable("ag")
   let g:ackprg = "ag --nogroup --column"
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 endif
-nmap <C-Enter> o<Esc>k
-nmap <C-S-Enter> O<Esc>j
-" nmap <Space-y> "ay
-" nmap <Space-p> "ap
+
+" insert new line in normal mode
+nnoremap <Leader>J :set paste<CR>m`o<Esc>``:set nopaste<CR>
+nnoremap <Leader>K :set paste<CR>m`O<Esc>``:set nopaste<CR>
+
 set guifont=Monaco:h12
 
-let g:easytags_async = 1
-" autocmd FileType * set tags=./.tags;,~/.vim/.vimtags
-set cpoptions+=d  " i had to add this, it wasn't on until now.
-let g:easytags_file = '~/.vim/.vimtags'
-let g:easytags_events = ['BufReadPost', 'BufWritePost']
-let g:easytags_dynamic_files = 2
-let g:easytags_async = 1
-" let g:easytags_auto_update = 0  " check the question below
-" let g:easytags_auto_highlight = 0
-let g:easytags_resolve_links = 1
-let g:easytags_suppress_report = 1
-map <Leader> <Plug>(easymotion-prefix)
+" easymotion settings
+let g:EasyMotion_do_mapping = 0
+" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+" `s{char}{label}`
+nmap s <Plug>(easymotion-overwin-f)
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+
+" Emmet
+" autocmd FileType html imap <tab> <plug>(emmet-expand-abbr)
 let g:user_emmet_leader_key="<c-e>"
 " let g:user_emmet_install_global = 0
 " autocmd FileType html,eruby,css,scss,javascript.jsx EmmetInstall
 " let g:user_emmet_expandabbr_key = '<tab>'
 " imap <expr> <Leader> emmet#expandAbbrIntelligent("\<tab>")
-
-" Emmet
-" #####
-
-" autocmd FileType html imap <tab> <plug>(emmet-expand-abbr)
 " autocmd FileType eruby imap <tab> <plug>(emmet-expand-abbr)
 " autocmd FileType css imap <tab> <plug>(emmet-expand-abbr)
 " autocmd FileType scss imap <tab> <plug>(emmet-expand-abbr)
 " autocmd FileType pcss,postcss imap <tab> <plug>(emmet-expand-abbr)
 " autocmd FileType javascript.jsx imap <tab> <plug>(emmet-expand-abbr)
 
+" multicursor settings
 let g:multi_cursor_use_default_mapping=0
 let g:multi_cursor_next_key='<C-n>'
 let g:multi_cursor_prev_key='<C-j>'
 let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
-map <leader><CR> :CtrlPBuffer<cr>
-" let g:airline#extensions#tabline#enabled = 1
-" let g:bufferline_echo = 0
-" let g:airline#extensions#bufferline#enabled = 1
-" let g:airline#extensions#bufferline#overwrite_variables = 1
-" let g:bufferline_rotate = 1
 
-" tmux will only forward escape sequences to the terminal if surrounded by a
-" DCS sequence
-" http://sourceforge.net/mailarchive/forum.php?thread_name=AANLkTinkbdoZ8eNR1X2UobLTeww1jFrvfJxTMfKSq-L%2B%40mail.gmail.com&forum_name=tmux-users
+map <C-\> :CtrlPBuffer<cr>
+
+if has('gui_running')
+    set guioptions-=r "Hide the right side scrollbar
+    set guioptions-=L "Hide the left side scrollbar
+    set guioptions-=T "Hide toolbars...this is vim for craps sake
+    set guioptions-=m "Hide the menu, see above
+
+    " Size and position the window well (only perform on startup)
+    if !exists('g:vimrc_loaded')
+        set columns=85
+        set lines=999
+        winpos 999 5
+    endif
+
+    " Hightlight the current row. Index-guide plugin covers columns
+    set cursorline
+
+    " MacVim is very pretty
+    if has('gui_macvim')
+        " set transparency=8
+
+        " Fullscreen options
+        set fuoptions=maxvert
+        " au GUIEnter * set fullscreen
+    endif
+
+    " Set a pretty font
+    if has('win32')
+        set guifont=Consolas:h10
+    elseif has('mac')
+        if !exists('g:vimrc_loaded')
+          set guifont=Menlo:h12
+        endif
+    endif
+else
+    set nocursorline nocursorcolumn
+endif
+
+set textwidth=80
+set colorcolumn=+1,+2,+3,+4
+
+set vb
+
+" Easy access to maximizing
+nnoremap <C-_> <C-w>_
+
+set splitbelow
 
 " change cursor in insert mode
 if exists('$TMUX')
@@ -433,6 +518,33 @@ else
   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
 
+" automatically rebalance windows on vim resize
+autocmd VimResized * :wincmd =
+
+" zoom a vim pane, <C-w>= to re-balance
+nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
+nnoremap <leader>= :wincmd =<cr>
+
+" List out the syntax for the word under the cursor
+function! s:SyntaxGroup()
+    let hl = synIDattr(synID(line("."),col("."),1),"name")
+    let trans = synIDattr(synID(line("."),col("."),0),"name")
+    let low = synIDattr(synIDtrans(synID(line("."),col("."),1)),"name")
+    " for id in synstack(line("."), col("."))
+       " echo synIDattr(id, 'name')
+    " endfor
+    echo 'hl<' . hl . '> trans<' . trans . '>low<' . low . '>'
+endfunction
+command! SyntaxGroupUnderCursor call <sid>SyntaxGroup()
+nnoremap <LEADER>sg :SyntaxGroupUnderCursor<CR>
+
+nnoremap <leader>! :redraw!<cr>
+
+nnoremap <leader>mwh <C-w>H
+nnoremap <leader>mwj <C-w>J
+nnoremap <leader>mwk <C-w>K
+nnoremap <leader>mwl <C-w>L
+
 " Make CtrlP use ag for listing the files. Way faster and no useless files.
 " Without --hidden, it never finds .travis.yml since it starts with a dot
 let g:ctrlp_user_command = 'ag %s -l --hidden --nocolor --ignore-dir=.git -g ""'
@@ -441,7 +553,7 @@ let g:ctrlp_use_caching = 0
 " Allow opening mutlipe splits with same file via CtrlP
 let g:ctrlp_switch_buffer = 0
 
-let g:ctrlp_match_window_bottom = 0
+let g:ctrlp_match_window_bottom = 1
 let g:ctrlp_working_path_mode = 'r'
 let g:ctrlp_match_window_reversed = 0
 let g:ctrlp_mruf_default_order = 1
@@ -473,13 +585,8 @@ let rails_ctrlp_mappings = {
 for [mapping, directory] in items(rails_ctrlp_mappings)
   execute 'MapTargetedCtrlp '.mapping.' '.directory
 endfor
+nnoremap <leader>cpt :CtrlPTag<cr>
+nnoremap <c-]> :CtrlPtjump<cr>
+vnoremap <c-]> :CtrlPtjumpVisual<cr>
 
-" nmap <LEADER>rf :CtrlP ~/.vim/rcfiles<cr>
-" nmap <LEADER>rp :CtrlP ~/.vim/rcplugins<cr>
-" nmap <LEADER>ed :CtrlP ~/code/dotfiles<cr>
-
-" nnoremap <leader>cpt :CtrlPTag<cr>
-
-" nnoremap <leader>cpr :CtrlP =system('git rev-parse --show-toplevel')<cr><bs><cr>
-
-" vim:ft=vim
+vmap <Leader>et :call I18nTranslateString()<CR>
