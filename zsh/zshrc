@@ -43,7 +43,8 @@ alias be='bundle exec'
 
 bindkey -M viins '^r' history-incremental-search-backward
 bindkey -M vicmd '^r' history-incremental-search-backward
-KEYTIMEOUT=1
+bindkey -v
+export KEYTIMEOUT=1
 
 # Do not autoupdate tmux window titles
 log() {
@@ -90,11 +91,13 @@ ensure_tmux_is_running() {
   fi
 }
 
+ensure_tmux_is_running
+
 bindkey '^ ' autosuggest-accept
 
 MYSQL=/usr/local/mysql/bin
 export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
 
-export PATH="$PATH:$MYSQL:$HOME/.rvm/bin:$HOME/.npm-packages/bin:$HOME/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/bin:/sbin:/usr/local/sbin:/usr/local/bin:/opt/local/bin:/opt/local/sbin:/Users/ilko/.rvm/gems/ruby-2.1.1/bin:/Users/ilko/.rvm/gems/ruby-2.1.1@global/bin:/Users/ilko/.rvm/rubies/ruby-2.1.1/bin:/usr/local/mysql/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/ilko/usr:/Users/ilko/.rvm/bin:/Library/Frameworks/JRuby.framework/Versions/Current/bin:/Users/ilko/.rvm/bin:/usr/local/mysql/bin:/usr/local/mysql/bin:/usr/local/mysql/bin:/usr/local/mysql/bin"
+export PATH="/usr/local/bin:/usr/local/sbin:$PATH:$MYSQL:$HOME/.rvm/bin:$HOME/.npm-packages/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/bin:/sbin:/opt/local/bin:/opt/local/sbin:$HOME/.rvm/gems/ruby-2.1.1/bin:$HOME/.rvm/gems/ruby-2.1.1@global/bin:$HOME/.rvm/rubies/ruby-2.1.1/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/usr:$HOME/.rvm/bin:/Library/Frameworks/JRuby.framework/Versions/Current/bin:$HOME/.rvm/bin"
 
-ensure_tmux_is_running
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"

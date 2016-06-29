@@ -23,6 +23,7 @@ Plugin 'jiangmiao/auto-pairs'
 Plugin 'docunext/closetag.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'ivalkeen/vim-ctrlp-tjump'
+Plugin 'DavidEGx/ctrlp-smarttabs'
 Plugin 'chun-yang/vim-action-ag'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'nanotech/jellybeans.vim'
@@ -289,19 +290,19 @@ nnoremap <leader>R :e <C-r>=CurrenRelativeDirectory()<cr>
 " Delete current file and current buffer
 " map <leader>fd :call "delete(expand('%')) | bdelete!"
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" RENAME CURRENT FILE (thanks Gary Bernhardt)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! RenameFile()
-  let old_name = expand('%')
-  let new_name = input('New file name: ', expand('%'), 'file')
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    exec ':silent !rm ' . old_name
-    redraw!
-  endif
-endfunction
-map <Leader>n :call RenameFile()<cr>
+" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" " RENAME CURRENT FILE (thanks Gary Bernhardt)
+" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" function! RenameFile()
+"   let old_name = expand('%')
+"   let new_name = input('New file name: ', expand('%'), 'file')
+"   if new_name != '' && new_name != old_name
+"     exec ':saveas ' . new_name
+"     exec ':silent !rm ' . old_name
+"     redraw!
+"   endif
+" endfunction
+" map <Leader>n :call RenameFile()<cr>
 
 "Make Y yank to end of line (like D, or C)
 nmap Y y$
@@ -369,10 +370,10 @@ nnoremap <leader>fef :normal! gg=G``<CR>
 " nmap <silent> <leader>fc <ESC>/\v^[<=>]{7}( .*\|$)<CR>
 
 " upper/lower word
-nmap <leader>u mQviwU`Q
-nmap <leader>l mQviwu`Q
-map <Leader>nr :NERDTreeFind<CR>
+" nmap <leader>u mQviwU`Q
+" nmap <leader>l mQviwu`Q
 
+map <Leader>nr :NERDTreeFind<CR>
 nmap <C-a> :NERDTreeToggle<CR>
 let NERDTreeQuitOnOpen=1
 let NERDTreeIgnore = ['\.pyc$']
@@ -460,7 +461,7 @@ let g:multi_cursor_prev_key='<C-j>'
 let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
 
-map <C-\> :CtrlPBuffer<cr>
+map <leader>\ :CtrlPBuffer<cr>
 
 if has('gui_running')
     set guioptions-=r "Hide the right side scrollbar
@@ -545,6 +546,7 @@ nnoremap <leader>mwj <C-w>J
 nnoremap <leader>mwk <C-w>K
 nnoremap <leader>mwl <C-w>L
 
+let g:ctrlp_extensions = ['smarttabs']
 " Make CtrlP use ag for listing the files. Way faster and no useless files.
 " Without --hidden, it never finds .travis.yml since it starts with a dot
 let g:ctrlp_user_command = 'ag %s -l --hidden --nocolor --ignore-dir=.git -g ""'
@@ -588,5 +590,6 @@ endfor
 nnoremap <leader>cpt :CtrlPTag<cr>
 nnoremap <c-]> :CtrlPtjump<cr>
 vnoremap <c-]> :CtrlPtjumpVisual<cr>
+nnoremap <leader>t :CtrlPSmartTabs<CR>
 
 vmap <Leader>et :call I18nTranslateString()<CR>
