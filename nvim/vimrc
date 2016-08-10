@@ -231,7 +231,7 @@ let g:vim_markdown_folding_disabled = 1
 
 
 let g:neomake_javascript_enabled_makers = ['eslint']
-let g:neomake_haml_enabled_makers = ['haml_lint', 'haml']
+let g:neomake_haml_enabled_makers = ['hamllint']
 let g:neomake_ruby_enabled_makers = ['rubocop', 'mri']
 " let g:syntastic_erlang_checkers = ['syntaxerl']
 
