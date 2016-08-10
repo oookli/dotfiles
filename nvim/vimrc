@@ -40,7 +40,7 @@ Plug 'digitaltoad/vim-jade'
 Plug 'ervandew/supertab'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'stefanoverna/vim-i18n'
+" Plug 'stefanoverna/vim-i18n'
 Plug 'elzr/vim-json'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
@@ -231,7 +231,7 @@ let g:vim_markdown_folding_disabled = 1
 
 
 let g:neomake_javascript_enabled_makers = ['eslint']
-let g:neomake_haml_enabled_makers = ['haml_lint']
+let g:neomake_haml_enabled_makers = ['haml_lint', 'haml']
 let g:neomake_ruby_enabled_makers = ['rubocop', 'mri']
 " let g:syntastic_erlang_checkers = ['syntaxerl']
 
@@ -554,7 +554,7 @@ nnoremap <leader>mwl <C-w>L
 let g:ctrlp_extensions = ['smarttabs']
 " Make CtrlP use ag for listing the files. Way faster and no useless files.
 " Without --hidden, it never finds .travis.yml since it starts with a dot
-let g:ctrlp_user_command = 'ag %s -l --hidden --nocolor --ignore-dir=.git -g ""'
+let g:ctrlp_user_command = 'ag %s -l --hidden --nocolor --ignore-dir=.git --ignore-dir=node_modules --skip-vcs-ignores -g ""'
 let g:ctrlp_use_caching = 0
 
 " Allow opening mutlipe splits with same file via CtrlP
@@ -598,3 +598,4 @@ vnoremap <c-]> :CtrlPtjumpVisual<cr>
 nnoremap <leader>t :CtrlPSmartTabs<CR>
 
 vmap <Leader>et :call I18nTranslateString()<CR>
+nnoremap <silent> <BS> :TmuxNavigateLeft<cr>

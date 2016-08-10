@@ -1,0 +1,6 @@
+branch_checkout () {
+  local branch
+  branch=$(git for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short)' | fzf --no-sort --reverse) && $(git checkout "$branch")
+}
+
+branch_checkout

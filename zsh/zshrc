@@ -1,3 +1,4 @@
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 plugins=(zsh-syntax-highlighting git ruby rails gem history history-substring-search terminalapp brew osx vi-mode zsh-autosuggestions)
@@ -9,6 +10,7 @@ export VISUAL='vim'
 export EDITOR=$VISUAL
 
 source $ZSH/oh-my-zsh.sh
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 export BUNDLER_EDITOR='vim'
 
@@ -100,6 +102,6 @@ bindkey '^ ' autosuggest-accept
 MYSQL=/usr/local/mysql/bin
 export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
 
-export PATH="/usr/local/bin:/usr/local/sbin:$PATH:$MYSQL:$HOME/.rvm/bin:$HOME/.npm-packages/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/bin:/sbin:/opt/local/bin:/opt/local/sbin:$HOME/.rvm/gems/ruby-2.1.1/bin:$HOME/.rvm/gems/ruby-2.1.1@global/bin:$HOME/.rvm/rubies/ruby-2.1.1/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/usr:$HOME/.rvm/bin:/Library/Frameworks/JRuby.framework/Versions/Current/bin:$HOME/.rvm/bin"
+export PATH="$PATH:$HOME/.npm-global/bin:/usr/local/bin:/usr/local/sbin:$MYSQL:$HOME/.rvm/bin:$HOME/.npm-packages/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/bin:/sbin:/opt/local/bin:/opt/local/sbin:$HOME/.rvm/gems/ruby-2.1.1/bin:$HOME/.rvm/gems/ruby-2.1.1@global/bin:$HOME/.rvm/rubies/ruby-2.1.1/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/usr:$HOME/.rvm/bin:/Library/Frameworks/JRuby.framework/Versions/Current/bin:$HOME/.rvm/bin:/Applications/Postgres.app/Contents/Versions/latest/bin"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
