@@ -20,6 +20,7 @@ Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
 Plug 'docunext/closetag.vim'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'christoomey/ctrlp-generic'
 Plug 'ivalkeen/vim-ctrlp-tjump'
 Plug 'DavidEGx/ctrlp-smarttabs'
 Plug 'chun-yang/vim-action-ag'
@@ -285,8 +286,27 @@ function! CurrenRelativeDirectory()
 endfunction
 
 " Easy navigation for editing and cding
-nnoremap <leader>rr :CtrlP <C-r>=CurrenRelativeDirectory()<cr><cr>
-nnoremap <leader>R :e <C-r>=CurrenRelativeDirectory()<cr>
+" nnoremap <leader>rr :CtrlP <C-r>=CurrenRelativeDirectory()<cr><cr>
+nnoremap <leader>R :e <C-r>=<cr>
+
+function! s:CurrentDirectory()
+  let relative_dir = substitute(expand("%:p:h"), getcwd()."/", "", "")."/"
+  let cwd_contents = split(system('ls -F '.relative_dir), '\n')
+  let dirs = map(cwd_contents, 'v:val[0:-1]')
+  call CtrlPGeneric(dirs, 'SelectFile')
+endfunction
+
+function! SelectFile(selected) range
+  let relative_dir = substitute(expand("%:p:h"), getcwd()."/", "", "")."/"
+  if filereadable(relative_dir. a:selected)
+    execute 'e '.relative_dir. a:selected
+  else
+    execute 'CtrlP '.relative_dir. a:selected
+  endif
+endfunction
+
+command! CtrlPCurrentDirectory call s:CurrentDirectory()
+nmap <leader>rr :CtrlPCurrentDirectory<cr>
 
 " Delete current file and current buffer
 " map <leader>fd :call "delete(expand('%')) | bdelete!"
