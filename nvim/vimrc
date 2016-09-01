@@ -546,6 +546,7 @@ command! SyntaxGroupUnderCursor call <sid>SyntaxGroup()
 nnoremap <LEADER>sg :SyntaxGroupUnderCursor<CR>
 
 nnoremap <leader>! :redraw!<cr>
+nnoremap <leader>u :e!<cr>
 
 nnoremap <leader>mwh <C-w>H
 nnoremap <leader>mwj <C-w>J
@@ -600,5 +601,46 @@ nnoremap <leader>t :CtrlPSmartTabs<CR>
 
 vmap <Leader>et :call I18nTranslateString()<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
+
+let g:ctrlp_buffer_func = { 'enter': 'CtrlPBDelete' }
+
+function! CtrlPBDelete()
+  nnoremap <buffer> <silent> <M-d> :call <sid>DeleteMarkedBuffers()<cr>
+endfunction
+
+function! s:DeleteMarkedBuffers()
+  " get the line number to preserve position
+  let currln = line('.')
+  let lastln = line('$')
+
+  " list all marked buffers
+  let marked = ctrlp#getmarkedlist()
+
+  " the file under the cursor is implicitly marked
+  if empty(marked)
+    call add(marked, fnamemodify(ctrlp#getcline(), ':p'))
+  endif
+
+  " call bdelete on all marked buffers
+  for fname in marked
+    let g:ctrlp_delete_buf_fname = fname
+    let bufid = fname =~ '\[\d\+\*No Name\]$'
+                        \ ? str2nr(matchstr(matchstr(fname, '\[\d\+\*No Name\]$'), '\d\+'))
+                        \ : fnamemodify(fname, ':p')
+    let g:ctrlp_delete_buf_bufid = substitute(bufid, ' ', '\\ ', "g")
+    exec "silent! bdelete" g:ctrlp_delete_buf_bufid
+  endfor
+
+  " refresh ctrlp
+  exec "normal \<f5>"
+
+  " unmark buffers that have been deleted
+  silent! call ctrlp#clearmarkedlist()
+
+  " preserve line selection
+  if line('.') == currln && line('$') < lastln
+    exec "normal \<up>"
+  endif
+endfunction
 
 au BufRead,BufNewFile *.es6 setfiletype javascript
