@@ -7,3 +7,36 @@ vnoremap <C-Space> <Esc>gV
 onoremap <C-Space> <Esc>
 cnoremap <C-Space> <C-c>
 inoremap <C-Space> <Esc>`^
+
+" ctrlp!
+nnoremap <C-p> :xccmd openQuickly<CR>
+
+" Windows
+nmap <C-h> <C-w>h
+nmap <C-j> <C-w>j
+nmap <C-k> <C-w>k
+nmap <C-l> <C-w>l
+
+" navigator
+nnoremap <C-a> :xccmd toggleNavigatorsVisibility<CR> :xccmd toggleUtilitiesVisibility<CR> :xccmd toggleDebuggerVisibility<CR>
+nnoremap <Space>nr :xccmd revealInProjectNavigator<CR>
+
+" tabs
+nnoremap gt :xccmd selectNextTab<CR>
+nnoremap gT :xccmd selectPreviousTab<CR>
+
+" comments
+nnoremap gcc :xcmenucmd Comment Selection<CR>
+vnoremap gc  :xcmenucmd Comment Selection<CR>
+
+" keep selection after indenting
+vnoremap > >gv
+vnoremap < <gv
+
+" dot should also work in visual mode
+vnoremap . :norm.<CR>
+
+" remove whitespace
+command! KillWhitespace :normal :%s/\s\+$//g<cr>
+
+set clipboard=unnamed

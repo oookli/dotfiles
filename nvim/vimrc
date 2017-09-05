@@ -12,7 +12,6 @@ Plug 'tommcdo/vim-exchange'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'Shougo/vimproc.vim'
 Plug 'tpope/vim-rvm'
-Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-commentary'
@@ -29,10 +28,13 @@ Plug 'nanotech/jellybeans.vim'
 Plug 'rking/ag.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'bling/vim-airline'
+Plug 'elixir-lang/vim-elixir'
+Plug 'leafgarland/typescript-vim'
 " Plug 'jeetsukumaran/vim-buffergator'
 Plug 'tpope/vim-projectionist'
-Plug 'tpope/vim-dispatch'
-Plug 'majutsushi/tagbar'
+Plug 'slim-template/vim-slim'
+" Plug 'tpope/vim-dispatch'
+" Plug 'majutsushi/tagbar'
 Plug 'godlygeek/tabular'
 Plug 'mbbill/undotree'
 Plug 'kchmck/vim-coffee-script'
@@ -64,6 +66,7 @@ Plug 'neomake/neomake'
 Plug 'chrisbra/csv.vim'
 Plug 'keith/swift.vim'
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
+Plug 'Chiel92/vim-autoformat'
 
 call plug#end()
 
@@ -161,7 +164,7 @@ map <leader>rt <plug>runfocusedspec
 
 " macos vs linux clipboard
 if has("mac")
-  set clipboard+=unnamed
+  set clipboard=unnamed
 else
   set clipboard=unnamedplus
 endif
@@ -226,8 +229,8 @@ let g:vim_json_syntax_conceal = 0
 " autocmd filetype xml setlocal omnifunc=xmlcomplete#completetags
 " autocmd filetype ruby setlocal omnifunc=rubycomplete#completetags
 
-let g:buffergator_viewport_split_policy = "b"
-let g:buffergator_sort_regime = "mru"
+" let g:buffergator_viewport_split_policy = "b"
+" let g:buffergator_sort_regime = "mru"
 
 let g:vim_markdown_folding_disabled = 1
 
@@ -243,7 +246,8 @@ autocmd! BufWritePost * Neomake
 " smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 " xmap <C-k>     <Plug>(neosnippet_expand_target)
 
-nmap <F8> :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
+nnoremap <silent><leader>] :TagbarToggle<CR>
 nnoremap <F5> :UndotreeToggle<cr>
 " export TERMINFO="$HOME/.terminfo"
 " Map ctrl-movement keys to window switching
@@ -280,32 +284,34 @@ map <leader>sop :source %<cr>
 " Doesn't seem I'm going to win on this one
 command! W write
 
-function! CurrenRelativeDirectory()
-  let relative_dir = substitute(expand("%:p:h"), getcwd()."/", "", "")."/"
-  return escape(relative_dir, " ")
-endfunction
-
 " Easy navigation for editing and cding
-" nnoremap <leader>rr :CtrlP <C-r>=CurrenRelativeDirectory()<cr><cr>
 nnoremap <leader>R :e <C-r>=<cr>
 
-function! s:CurrentDirectory()
-  let relative_dir = substitute(expand("%:p:h"), getcwd()."/", "", "")."/"
-  let cwd_contents = split(system('ls -F '.relative_dir), '\n')
+function! s:CurrentDirectory(relative_dir)
+  let cwd_contents = split("../".a:relative_dir."\n". system('ls -F '.a:relative_dir), '\n')
   let dirs = map(cwd_contents, 'v:val[0:-1]')
   call CtrlPGeneric(dirs, 'SelectFile')
 endfunction
 
 function! SelectFile(selected) range
   let relative_dir = substitute(expand("%:p:h"), getcwd()."/", "", "")."/"
+
   if filereadable(relative_dir. a:selected)
     execute 'e '.relative_dir. a:selected
   else
-    execute 'CtrlP '.relative_dir. a:selected
+    let current_path = strpart(a:selected, matchend(a:selected, "\.\./"))
+    let current_dir = substitute(current_path, "[^\/]*\/*$", "", "")
+
+    call s:CurrentDirectory(current_dir)
   endif
 endfunction
 
-command! CtrlPCurrentDirectory call s:CurrentDirectory()
+function! s:getCurrentDirectory()
+  let relative_dir = substitute(expand("%:p:h"), getcwd()."/", "", "")."/"
+  call s:CurrentDirectory(relative_dir)
+endfunction
+
+command! CtrlPCurrentDirectory call s:getCurrentDirectory()
 nmap <leader>rr :CtrlPCurrentDirectory<cr>
 
 " Delete current file and current buffer
@@ -446,6 +452,10 @@ let g:ag_highlight=1
 if executable("ag")
   let g:ackprg = "ag --nogroup --column"
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+  " Make CtrlP use ag for listing the files. Way faster and no useless files.
+  " Without --hidden, it never finds .travis.yml since it starts with a dot
+  let g:ctrlp_user_command = 'ag %s -l --hidden --nocolor --smart-case --literal --ignore-dir=.git --ignore-dir=node_modules --skip-vcs-ignores -g ""'
+  let g:ctrlp_use_caching = 0
 endif
 
 " insert new line in normal mode
@@ -459,22 +469,18 @@ set guifont=Monaco:h12
 let g:EasyMotion_do_mapping = 0
 " Jump to anywhere you want with minimal keystrokes, with just one key binding.
 " `s{char}{label}`
-nmap s <Plug>(easymotion-overwin-f)
+nmap <Tab><Tab> <Plug>(easymotion-overwin-f)
 " Turn on case insensitive feature
 let g:EasyMotion_smartcase = 1
 
 " Emmet
-" autocmd FileType html imap <tab> <plug>(emmet-expand-abbr)
 let g:user_emmet_leader_key="<c-e>"
 " let g:user_emmet_install_global = 0
-" autocmd FileType html,eruby,css,scss,javascript.jsx EmmetInstall
-" let g:user_emmet_expandabbr_key = '<tab>'
-" imap <expr> <Leader> emmet#expandAbbrIntelligent("\<tab>")
-" autocmd FileType eruby imap <tab> <plug>(emmet-expand-abbr)
+" autocmd FileType html,haml,css,scss EmmetInstall
+" autocmd FileType html imap <tab> <plug>(emmet-expand-abbr)
+" autocmd FileType haml imap <tab> <plug>(emmet-expand-abbr)
 " autocmd FileType css imap <tab> <plug>(emmet-expand-abbr)
 " autocmd FileType scss imap <tab> <plug>(emmet-expand-abbr)
-" autocmd FileType pcss,postcss imap <tab> <plug>(emmet-expand-abbr)
-" autocmd FileType javascript.jsx imap <tab> <plug>(emmet-expand-abbr)
 
 " multicursor settings
 let g:multi_cursor_use_default_mapping=0
@@ -484,6 +490,7 @@ let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
 
 map <leader>\ :CtrlPBuffer<cr>
+let g:ctrlp_dont_split = 'NERD'
 
 if has('gui_running')
     set guioptions-=r "Hide the right side scrollbar
@@ -574,10 +581,6 @@ nnoremap <leader>mwk <C-w>K
 nnoremap <leader>mwl <C-w>L
 
 let g:ctrlp_extensions = ['smarttabs']
-" Make CtrlP use ag for listing the files. Way faster and no useless files.
-" Without --hidden, it never finds .travis.yml since it starts with a dot
-let g:ctrlp_user_command = 'ag %s -l --hidden --nocolor --ignore-dir=.git --ignore-dir=node_modules --skip-vcs-ignores -g ""'
-let g:ctrlp_use_caching = 0
 
 " Allow opening mutlipe splits with same file via CtrlP
 let g:ctrlp_switch_buffer = 0
@@ -664,3 +667,10 @@ function! s:DeleteMarkedBuffers()
 endfunction
 
 au BufRead,BufNewFile *.es6 setfiletype javascript
+
+set shortmess=I
+
+let g:formatterpath = [ '/usr/local/bin/rubocop', '/Users/oookli/.rvm/gems/ruby-2.3.1/bin/ruby-beautify' ]
+let g:autoformat_verbosemode=1
+
+set iskeyword+=.

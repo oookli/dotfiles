@@ -102,6 +102,10 @@ bindkey '^ ' autosuggest-accept
 MYSQL=/usr/local/mysql/bin
 export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
 
-export PATH="$PATH:$HOME/.npm-global/bin:/usr/local/bin:/usr/local/sbin:$MYSQL:$HOME/.rvm/bin:$HOME/.npm-packages/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/opt/local/bin:/opt/local/sbin:/bin:/sbin:/opt/local/bin:/opt/local/sbin:$HOME/.rvm/gems/ruby-2.1.1/bin:$HOME/.rvm/gems/ruby-2.1.1@global/bin:$HOME/.rvm/rubies/ruby-2.1.1/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/usr:$HOME/.rvm/bin:/Library/Frameworks/JRuby.framework/Versions/Current/bin:$HOME/.rvm/bin:/Applications/Postgres.app/Contents/Versions/latest/bin"
+export PATH=$PATH:$HOME/.npm-global/bin:/usr/local/bin:/usr/local/sbin:$MYSQL:$HOME/.rvm/bin:$HOME/.rvm/scripts/rvm:$HOME/.npm-packages/bin:/usr/local/heroku/bin:/bin:/sbin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin:$HOME/usr:/Library/Frameworks/JRuby.framework/Versions/Current/bin:/Applications/Postgres.app/Contents/Versions/latest/bin
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+
+export PATH="$PATH:`yarn global bin`"
