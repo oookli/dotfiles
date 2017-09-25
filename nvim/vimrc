@@ -34,7 +34,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'tpope/vim-projectionist'
 Plug 'slim-template/vim-slim'
 " Plug 'tpope/vim-dispatch'
-" Plug 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar'
 Plug 'godlygeek/tabular'
 Plug 'mbbill/undotree'
 Plug 'kchmck/vim-coffee-script'
@@ -672,5 +672,3 @@ set shortmess=I
 
 let g:formatterpath = [ '/usr/local/bin/rubocop', '/Users/oookli/.rvm/gems/ruby-2.3.1/bin/ruby-beautify' ]
 let g:autoformat_verbosemode=1
-
-set iskeyword+=.

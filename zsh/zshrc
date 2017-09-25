@@ -6,7 +6,7 @@ plugins=(zsh-syntax-highlighting git ruby rails gem history history-substring-se
 export ZSH_THEME="bureau"
 
 # use vim as the visual editor
-export VISUAL='vim'
+export VISUAL='nvim'
 export EDITOR=$VISUAL
 
 source $ZSH/oh-my-zsh.sh
@@ -109,3 +109,4 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
 export PATH="$PATH:`yarn global bin`"
+source ~/.bin/tmuxinator.zsh
