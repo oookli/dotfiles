@@ -251,6 +251,7 @@ key_bindings:
   - { key: Insert,                  chars: "\x1b[2~"                     }
   - { key: Delete,                  chars: "\x1b[3~"                     }
   - { key: Space,    mods: Control, chars: "\x00"                        }
+  - { key: Key6,     mods: Control, chars: "\x1e"                        }
 
 # Mouse bindings
 #
