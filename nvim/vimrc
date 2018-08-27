@@ -15,6 +15,7 @@ Plug 'tpope/vim-rvm'
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-commentary'
+Plug 'suy/vim-context-commentstring'
 Plug 'tpope/vim-repeat'
 Plug 'jiangmiao/auto-pairs'
 Plug 'docunext/closetag.vim'
@@ -47,6 +48,7 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'elzr/vim-json'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
+" Plug 'peitalin/vim-jsx-typescript'
 Plug 'moll/vim-node'
 Plug 'mattn/emmet-vim'
 Plug 'Valloric/MatchTagAlways'
@@ -674,3 +676,14 @@ set shortmess=I
 
 let g:formatterpath = [ '/usr/local/bin/rubocop', '/Users/oookli/.rvm/gems/ruby-2.3.1/bin/ruby-beautify' ]
 let g:autoformat_verbosemode=1
+
+vnoremap ;rv c<C-O>:set revins<CR><C-R>"<Esc>:set norevins<CR>
+
+" autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescript.jsx
+
+" let g:context#commentstring#table['javascript.jsx'] = {
+"       \ 'jsComment' : '// %s',
+"       \ 'jsImport' : '// %s',
+"       \ 'jsxStatment' : '// %s',
+"       \ 'jsxRegion' : '{/*%s*/}',
+" \}
