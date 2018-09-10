@@ -1,1 +1,1 @@
-("~/code/dotfiles/")
+("~/code/dotfiles/" "~/Sites/vnv-console/")

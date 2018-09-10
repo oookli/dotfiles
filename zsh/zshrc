@@ -125,3 +125,9 @@ if [ -f '/Users/oookli/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then so
 
 . $HOME/.asdf/completions/asdf.bash
 export PATH="/usr/local/opt/node@8/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+. "/usr/local/opt/nvm/nvm.sh"
+
+export OWL="/Users/ifedak/Sites/owl"
+eval "$("$OWL/bin/owl" init -)"

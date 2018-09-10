@@ -1,6 +1,11 @@
 (require 'package)
 
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+;;; Standard package repositories
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -69,6 +74,27 @@
   :commands (helm-projectile helm-projectile-switch-project)
   :ensure t)
 
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
+(use-package rjsx-mode
+   :ensure t
+   :config
+   ;; (defun rjsx-mode-config ()
+   ;;  "Configure RJSX Mode"
+   ;;  (define-key rjsx-mode-map (kbd "C-j") 'rjsx-delete-creates-full-tag))
+
+   (add-hook 'rjsx-mode-hook 'rjsx-mode-config))
+
+(setq-default tab-width 2)
+
 (evil-define-key 'normal global-map (kbd "C-p")     'helm-projectile)
 (evil-define-key 'normal global-map (kbd "C-S-p")   'helm-projectile-switch-project)
 
@@ -93,7 +119,7 @@
  '(fci-rule-color "#d6d6d6")
  '(flycheck-color-mode-line-face-to-color (quote mode-line-buffer-id))
  '(frame-background-mode (quote light))
- '(package-selected-packages (quote (use-package evil)))
+ '(package-selected-packages (quote (## editorconfig helm-projectile use-package evil)))
  '(vc-annotate-background nil)
  '(vc-annotate-color-map
    (quote
