@@ -5,6 +5,7 @@ let mapleader="\<Space>"
 " # Plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'sheerun/vim-polyglot'
 Plug 'VundleVim/Vundle.vim'
 Plug 'tpope/vim-abolish'
 Plug 'dyng/ctrlsf.vim'
@@ -29,33 +30,33 @@ Plug 'nanotech/jellybeans.vim'
 Plug 'rking/ag.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'bling/vim-airline'
-Plug 'elixir-lang/vim-elixir'
-Plug 'leafgarland/typescript-vim'
+" Plug 'elixir-lang/vim-elixir'
+" Plug 'leafgarland/typescript-vim'
 " Plug 'jeetsukumaran/vim-buffergator'
 Plug 'tpope/vim-projectionist'
-Plug 'slim-template/vim-slim'
+" Plug 'slim-template/vim-slim'
 " Plug 'tpope/vim-dispatch'
 Plug 'majutsushi/tagbar'
 Plug 'godlygeek/tabular'
 Plug 'mbbill/undotree'
 " Plug 'kchmck/vim-coffee-script'
-Plug 'othree/html5.vim'
-Plug 'digitaltoad/vim-jade'
+" Plug 'othree/html5.vim'
+" Plug 'digitaltoad/vim-jade'
 Plug 'ervandew/supertab'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'editorconfig/editorconfig-vim'
 " Plug 'stefanoverna/vim-i18n'
-Plug 'elzr/vim-json'
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
+" Plug 'elzr/vim-json'
+" Plug 'pangloss/vim-javascript'
+" Plug 'mxw/vim-jsx'
 " Plug 'peitalin/vim-jsx-typescript'
 Plug 'moll/vim-node'
 Plug 'mattn/emmet-vim'
 Plug 'Valloric/MatchTagAlways'
 Plug 'plasticboy/vim-markdown'
-Plug 'tpope/vim-haml'
-Plug 'nono/vim-handlebars'
-Plug 'vim-ruby/vim-ruby'
+" Plug 'tpope/vim-haml'
+" Plug 'nono/vim-handlebars'
+" Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-bundler'
 Plug 'thoughtbot/vim-rspec'
@@ -65,10 +66,12 @@ Plug 'christoomey/vim-tmux-runner'
 Plug 'christoomey/vim-tmux-navigator'
 " Plug 'scrooloose/syntastic'
 Plug 'neomake/neomake'
-Plug 'chrisbra/csv.vim'
-Plug 'keith/swift.vim'
+" Plug 'chrisbra/csv.vim'
+" Plug 'keith/swift.vim'
 Plug 'othree/yajs.vim', { 'for': 'javascript' }
 Plug 'Chiel92/vim-autoformat'
+" Plug 'sbdchd/neoformat'
+" Plug 'w0rp/ale'
 
 call plug#end()
 
@@ -624,7 +627,10 @@ endfor
 nnoremap <leader>cpt :CtrlPTag<cr>
 nnoremap <c-]> :CtrlPtjump<cr>
 vnoremap <c-]> :CtrlPtjumpVisual<cr>
-nnoremap <leader>t :CtrlPSmartTabs<CR>
+
+let g:spec_runner_dispatcher = "VtrSendCommand! {command}"
+let g:VtrOrientation = "h"
+map <leader>t <Plug>RunFocusedSpec
 
 vmap <Leader>et :call I18nTranslateString()<CR>
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
@@ -687,3 +693,45 @@ vnoremap ;rv c<C-O>:set revins<CR><C-R>"<Esc>:set norevins<CR>
 "       \ 'jsxStatment' : '// %s',
 "       \ 'jsxRegion' : '{/*%s*/}',
 " \}
+
+" let g:neoformat_try_formatprg = 1
+
+" augroup NeoformatAutoFormat
+"     autocmd!
+"     autocmd FileType javascript setlocal formatprg=prettier\
+"                                              \--stdin\
+"                                              \--print-width\ 80\
+"                                              \--single-quote\
+"                                              \--trailing-comma\ es5
+"     autocmd BufWritePre *.js Neoformat
+" augroup END
+
+" augroup NeoformatAutoFormat
+"     autocmd!
+"     autocmd FileType javascript,javascript.jsx setlocal formatprg=prettier\
+"                                                             \--stdin\
+"                                                             \--print-width\ 80\
+"                                                             \--single-quote\
+"                                                             \--trailing-comma\ es5
+"     autocmd BufWritePre *.js,*.jsx Neoformat
+" augroup END
+
+" ale
+" let g:ale_linters = {
+"       \  'javascript': ['eslint'],
+"             \ }
+
+" let g:ale_fixers = {
+"       \  'javascript': ['prettier', 'eslint'],
+"       \  'jsx': ['prettier', 'eslint'],
+"       \  'flow': ['prettier'],
+"       \  'typescript': ['prettier'],
+"       \  'css': ['prettier'],
+"       \  'less': ['prettier'],
+"       \  'scss': ['prettier'],
+"       \  'json': ['prettier'],
+"       \  'graphql': ['prettier'],
+"       \  'markdown': ['prettier'],
+"             \ }
+
+" let g:ale_javascript_prettier_options = '--single-quote --trailing-comma es5'

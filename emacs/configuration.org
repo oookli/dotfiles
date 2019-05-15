@@ -1,0 +1,821 @@
+#+TITLE: Emacs Configuration
+#+AUTHOR: Ilko Fedak
+#+EMAIL: oklika@gmail.com
+#+OPTIONS: toc:nil num:nil
+
+* Use sensible-defaults.el
+
+Use [[https://github.com/oookli/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
+
+#+BEGIN_SRC emacs-lisp
+  (load-file (expand-file-name "sensible-defaults/sensible-defaults.el" user-emacs-directory))
+  (sensible-defaults/use-all-settings)
+  (sensible-defaults/use-all-keybindings)
+  (sensible-defaults/backup-to-temp-directory)
+#+END_SRC
+
+* Start server
+#+BEGIN_SRC emacs-lisp
+    (server-start)
+#+END_SRC
+
+
+* use-package basic stuff
+We’re going to set the load-path ourselves and avoid calling (package-initilize) (for performance reasons) so we need to set package--init-file-ensured to true to tell package.el to not automatically call it on our behalf. Additionally we’re setting package-enable-at-startup to nil so that packages will not automatically be loaded for us since use-package will be handling that.
+
+#+BEGIN_SRC emacs-lisp
+  (eval-and-compile
+    (setq load-prefer-newer t
+          package-user-dir "~/.emacs.d/elpa"
+          package--init-file-ensured t
+          package-enable-at-startup nil)
+
+    (unless (file-directory-p package-user-dir)
+      (make-directory package-user-dir t))
+
+    (setq load-path (append load-path (directory-files package-user-dir t "^[^.]" t))))
+
+
+  (eval-when-compile
+    (require 'package)
+    ;; tells emacs not to load any packages before starting up
+    ;; the following lines tell emacs where on the internet to look up
+    ;; for new packages.
+    (setq package-archives '(("melpa"        . "https://melpa.org/packages/")
+			     ("melpa-stable" . "http://stable.melpa.org/packages/")
+                             ("elpa"         . "https://elpa.gnu.org/packages/")
+                             ("repo-org"     . "https://orgmode.org/elpa/")
+    			     ("org"          . "http://orgmode.org/elpa/")
+  			     ("marmalade"    . "http://marmalade-repo.org/packages/")
+ 			     ("elpy"         . "https://jorgenschaefer.github.io/packages/")))
+    ;; (package-initialize)
+    (unless package--initialized (package-initialize t))
+
+    ;; Bootstrap `use-package'
+    (unless (package-installed-p 'use-package) ; unless it is already installed
+      (package-refresh-contents) ; updage packages archive
+      (package-install 'use-package)) ; and install the most recent version of use-package
+
+    (require 'use-package)
+    (setq use-package-always-ensure t))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+* Utility functions
+#+BEGIN_SRC emacs-lisp
+	;; (defun oookli/rename-file (new-name)
+	;;   (interactive "FNew name: ")
+	;;   (let ((filename (buffer-file-name)))
+	;;     (if filename
+	;;         (progn
+	;;           (when (buffer-modified-p)
+	;;              (save-buffer))
+	;;           (rename-file filename new-name t)
+	;;           (kill-buffer (current-buffer))
+	;;           (find-file new-name)
+	;;           (message "Renamed '%s' -> '%s'" filename new-name))
+	;;       (message "Buffer '%s' isn't backed by a file!" (buffer-name)))))
+
+	;; (defun oookli/generate-scratch-buffer ()
+	;; 	"Create and switch to a temporary scratch buffer with a random
+	;; 		 name."
+	;; 	(interactive)
+	;; 	(switch-to-buffer (make-temp-name "scratch-")))
+
+	(defun oookli/kill-current-buffer ()
+		"Kill the current buffer without prompting."
+		(interactive)
+		(kill-buffer (current-buffer)))
+
+	;; (defun oookli/visit-last-migration ()
+	;; 	"Open the most recent Rails migration. Relies on projectile."
+	;; 	(interactive)
+	;; 	(let ((migrations
+	;; 				 (directory-files
+	;; 					(expand-file-name "db/migrate" (projectile-project-root)) t)))
+	;; 		(find-file (car (last migrations)))))
+
+	(defun oookli/add-auto-mode (mode &rest patterns)
+		"Add entries to `auto-mode-alist' to use `MODE' for all given file `PATTERNS'."
+		(dolist (pattern patterns)
+			(add-to-list 'auto-mode-alist (cons pattern mode))))
+
+	;; (defun oookli/find-file-as-sudo ()
+	;; 	(interactive)
+	;; 	(let ((file-name (buffer-file-name)))
+	;; 		(when file-name
+	;; 			(find-alternate-file (concat "/sudo::" file-name)))))
+
+	;; (defun oookli/region-or-word ()
+	;; 	(if mark-active
+	;; 			(buffer-substring-no-properties (region-beginning)
+	;; 																			(region-end))
+	;; 		(thing-at-point 'word)))
+
+	(defun oookli/append-to-path (path)
+		"Add a path both to the $PATH variable and to Emacs' exec-path."
+		(setenv "PATH" (concat (getenv "PATH") ":" path))
+		(add-to-list 'exec-path path))
+#+END_SRC
+
+* WhichKey
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :config (which-key-mode 1))
+#+END_SRC
+
+* General.el
+#+BEGIN_SRC emacs-lisp
+  (use-package general
+    :after which-key
+    :config
+		(setq mac-command-modifier 'super)
+    (general-override-mode 1)
+		(defun oookli/split-window-below-and-switch ()
+				"Split the window horizontally, then switch to the new pane."
+				(interactive)
+				(split-window-below)
+				(balance-windows)
+				(other-window 1))
+
+		(defun oookli/split-window-right-and-switch ()
+				"Split the window vertically, then switch to the new pane."
+				(interactive)
+				(split-window-right)
+				(balance-windows)
+				(other-window 1))
+
+    (general-create-definer tyrant-def
+      :states '(normal visual insert motion emacs)
+      :prefix "SPC"
+      :non-normal-prefix "C-s")
+
+    (tyrant-def
+      ""     nil
+			"-"    'oookli/split-window-below-and-switch
+			"/"    'oookli/split-window-right-and-switch
+      "SPC"  'save-buffer))
+
+#+END_SRC
+
+* Evil mode
+** Init evil mode by default
+#+BEGIN_SRC emacs-lisp
+	(use-package evil
+		:hook (after-init . evil-mode)
+		:init
+		(setq
+			evil-want-C-u-scroll t
+			;; don't move back the cursor one position when exiting insert mode
+			evil-move-cursor-back nil)
+		:config
+		;; (evil-set-initial-state 'shell-mode 'normal)
+		;; (evil-set-initial-state 'doc-view-mode 'normal)
+		;; (evil-set-initial-state 'package-menu-mode 'normal)
+		;; (evil-set-initial-state 'biblio-selection-mode 'motion)
+		(setq doc-view-continuous t)
+		:general
+		(tyrant-def
+			;; "wh"  'evil-window-left
+			;; "wl"  'evil-window-right
+			;; "wj"  'evil-window-down
+			;; "wk"  'evil-window-up
+			"x"  'oookli/kill-current-buffer
+			"n"  'evil-buffer-new
+			"fd"  'evil-save-and-close))
+		;; ('motion override-global-map
+		;;  "]b"  'evil-next-buffer
+		;;  "[b"  'evil-prev-buffer)
+#+END_SRC
+
+** surround
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-surround
+    :after evil
+    :config (global-evil-surround-mode 1))
+#+END_SRC
+
+** commentary
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-commentary
+    :after evil
+    :config (evil-commentary-mode 1)
+    :general
+    ('normal override-global-map
+				"gc"  'evil-commentary
+				"gC" 'evil-commentary-line))
+#+END_SRC
+
+** escape
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-escape
+    :ensure t
+    :config
+    (add-hook 'evil-escape-hook 'evil-ex-nohighlight)
+    :general
+    (general-def "C-SPC" 'evil-escape))
+#+END_SRC
+* UI preferences
+** Tweak window chrome
+
+I don't usually use the menu or scroll bar, and they take up useful space.
+
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode 0)
+  (menu-bar-mode 0)
+  (scroll-bar-mode -1)
+#+END_SRC
+
+There's a tiny scroll bar that appears in the minibuffer window. This disables
+that:
+
+#+BEGIN_SRC emacs-lisp
+  (set-window-scroll-bars (minibuffer-window) nil nil)
+#+END_SRC
+
+The default frame title isn't useful. This binds it to the name of the current
+project:
+
+#+BEGIN_SRC emacs-lisp
+  (setq frame-title-format '((:eval (projectile-project-name))))
+#+END_SRC
+
+** Use fancy lambdas
+Why not?
+
+#+BEGIN_SRC emacs-lisp
+  (global-prettify-symbols-mode t)
+#+END_SRC
+** Theme
+#+BEGIN_SRC emacs-lisp
+  (use-package solarized-theme
+      :init
+      (setq solarized-scale-org-headlines nil)
+      (let ((line (face-attribute 'mode-line :underline)))
+      (set-face-attribute 'mode-line          nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :underline  line)
+      (set-face-attribute 'mode-line          nil :box        nil)
+      (set-face-attribute 'mode-line-inactive nil :box        nil)
+      (set-face-attribute 'mode-line-inactive nil :background "#f9f2d9"))
+      :hook (after-init . load-solarized-dark)
+      :config
+      (defun load-solarized-dark ()
+	  "Load the `solarized-dark' theme."
+	  (interactive)
+	  (load-theme 'solarized-dark))
+      (defun load-solarized-light ()
+	  "Load the `solarized-light' theme."
+	  (interactive)
+	  (load-theme 'solarized-light))
+      :general
+      (tyrant-def "ts"  '(:ignore t :which-key "solarized")
+		  "tsl" 'load-solarized-light
+		  "tsd" 'load-solarized-dark))
+#+END_SRC
+** Use =minions= to hide all minor modes
+
+I never want to see a minor mode, and manually adding =:diminish= to every
+use-package declaration is a hassle. This uses =minions= to hide all the minor
+modes in the modeline. Nice!
+
+By default there's a =;-)= after the major mode; that's an adorable default, but
+I'd rather skip it.
+
+#+BEGIN_SRC emacs-lisp
+   (use-package minions
+     :config
+     (setq minions-mode-line-lighter ""
+           minions-mode-line-delimiters '("" . ""))
+     (minions-mode 1))
+#+END_SRC
+
+** Disable visual bell
+
+=sensible-defaults= replaces the audible bell with a visual one, but I really
+don't even want that (and my Emacs/Mac pair renders it poorly). This disables
+the bell altogether.
+
+#+BEGIN_SRC emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+END_SRC
+** Highlight the current line
+
+=global-hl-line-mode= softly highlights the background color of the line
+containing point. It makes it a bit easier to find point, and it's useful when
+pairing or presenting code.
+
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode)
+#+END_SRC
+
+** Highlight uncommitted changes
+
+Use the =diff-hl= package to highlight changed-and-uncommitted lines when
+programming.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package diff-hl
+    :config
+    (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
+    (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
+#+END_SRC
+* Project management
+I use a few packages in virtually every programming or writing environment to
+manage the project, handle auto-completion, search for terms, and deal with
+version control. That's all in here.
+** Ag
+#+BEGIN_SRC emacs-lisp
+  (use-package ag
+    :commands (ag ag-project)
+    :config
+    (setq ag-executable "/usr/local/bin/ag")
+    (setq ag-highlight-search t)
+    (setq ag-reuse-buffers t)
+    (setq ag-reuse-window t))
+#+END_SRC
+** Company
+
+Use =company-mode= everywhere.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :hook (add-hook 'after-init-hook 'global-company-mode)
+    :general
+    (general-def "M-/" 'company-complete-common))
+#+END_SRC
+** Dumb-jump
+
+The =dumb-jump= package works well enough in a [[https://github.com/jacktasia/dumb-jump#supported-languages][ton of environments]], and it
+doesn't require any additional setup. I've bound its most useful command to
+=SPC-.=.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dumb-jump
+    :config
+    (setq dumb-jump-selector 'ivy)
+    :general
+    (tyrant-def
+      "."  'dumb-jump-go))
+
+#+END_SRC
+
+** Flycheck
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package flycheck)
+ #+END_SRC
+** Projectile
+
+Projectile's default binding of =projectile-ag= to =C-c p s s= is clunky enough
+that I rarely use it (and forget it when I need it). This binds it to the
+easier-to-type =C-c v= to useful searches.
+
+Bind =C-p= to fuzzy-finding files in the current project. We also need to
+explicitly set that in a few other modes.
+
+I use =ivy= as my completion system.
+
+When I visit a project with =projectile-switch-project=, the default action is
+to search for a file in that project. I'd rather just open up the top-level
+directory of the project in =dired= and find (or create) new files from there.
+
+I'd like to /always/ be able to recursively fuzzy-search for files, not just
+when I'm in a Projectile-defined project. I use the current directory as a
+project root (if I'm not in a "real" project).
+
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package projectile
+  ;; :ensure t
+  ;; :defer 1
+  ;; :config
+  ;; (projectile-mode)
+  ;; (setq projectile-project-search-path '("~/Sites/"))
+  ;; (setq projectile-enable-caching t)
+  ;; (setq projectile-mode-line
+  ;; 	'(:eval
+  ;; 	(format " Proj[%s]"
+  ;; 		(projectile-project-name)))))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+	(use-package projectile
+		:config
+		(setq projectile-completion-system 'ivy)
+		(setq projectile-switch-project-action 'projectile-dired)
+		(setq projectile-require-project-root nil)
+	  (projectile-global-mode)
+		:general
+		('normal '(override-global-map ag-mode-map rspec-mode-map)
+				"C-p" 'projectile-find-file)
+		(tyrant-def
+			","  'projectile-ag))
+
+#+END_SRC
+
+** Undo-tree
+
+I like tree-based undo management. I only rarely need it, but when I do, oh boy.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree)
+#+END_SRC
+
+* Programming environments
+I like shallow indentation, but tabs are displayed as 8 characters by default.
+This reduces that.
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default tab-width 2)
+#+END_SRC
+
+Treating terms in CamelCase symbols as separate words makes editing a little
+easier for me, so I like to use =subword-mode= everywhere.
+
+#+BEGIN_SRC emacs-lisp
+	(use-package subword
+		:config (global-subword-mode 1))
+	;; (superword-mode 1)
+#+END_SRC
+
+Compilation output goes to the =*compilation*= buffer. I rarely have that window
+selected, so the compilation output disappears past the bottom of the window.
+This automatically scrolls the compilation window so I can always see the
+output.
+
+#+BEGIN_SRC emacs-lisp
+  (setq compilation-scroll-output t)
+#+END_SRC
+
+** CSS, Sass, and Less
+Indent by 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package css-mode
+    :config
+    (setq css-indent-offset 2))
+#+END_SRC
+
+Don't compile the current SCSS file every time I save.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package scss-mode
+    :config
+    (setq scss-compile-at-save nil))
+#+END_SRC
+
+Install Less.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package less-css-mode)
+#+END_SRC
+
+** Haml and Slim
+
+Install the Haml and Slim packages.
+
+If I'm editing Haml or Slim templates I'm probably in a Rails project. In that
+case, I'd like to still be able to run my tests from the appropriate buffers.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package haml-mode
+	:config
+  (add-hook 'haml-mode-hook 'rspec-mode))
+
+  (use-package slim-mode
+	:config
+  (add-hook 'slim-mode-hook 'rspec-mode))
+#+END_SRC
+** JavaScript and CoffeeScript
+Install =coffee-mode= from editing CoffeeScript code.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package coffee-mode)
+#+END_SRC
+
+Indent everything by 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (setq js-indent-level 2)
+
+  (add-hook 'coffee-mode-hook
+            (lambda ()
+              (yas-minor-mode 1)
+              (setq coffee-tab-width 2)))
+#+END_SRC
+
+** Lisps
+
+I like to use =paredit= in Lisp modes to balance parentheses (and more!).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package paredit)
+#+END_SRC
+
+=rainbow-delimiters= is convenient for coloring matching parentheses.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-delimiters)
+#+END_SRC
+
+All the lisps have some shared features, so we want to do the same things for
+all of them. That includes using =paredit=, =rainbow-delimiters=, and
+highlighting the whole expression when point is on a parenthesis.
+
+#+BEGIN_SRC emacs-lisp
+  (setq lispy-mode-hooks
+        '(clojure-mode-hook
+          emacs-lisp-mode-hook
+          lisp-mode-hook
+          scheme-mode-hook))
+
+  (dolist (hook lispy-mode-hooks)
+    (add-hook hook (lambda ()
+                     (setq show-paren-style 'expression)
+                     (paredit-mode)
+                     (rainbow-delimiters-mode))))
+#+END_SRC
+
+If I'm writing in Emacs lisp I'd like to use =eldoc-mode= to display
+documentation.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eldoc
+    :config
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode))
+#+END_SRC
+
+I also like using =flycheck-package= to ensure that my Elisp packages are
+correctly formatted.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-package)
+
+  (eval-after-load 'flycheck
+    '(flycheck-package-setup))
+#+END_SRC
+** Ruby and RSpec
+I use =chruby= to switch between versions of Ruby. This sets a default version
+to use within Emacs (for things like =rspec=).
+
+#+BEGIN_SRC emacs-lisp
+  (setq oookli/ruby-version "2.5.3")
+
+  (use-package chruby
+    :config
+    (chruby oookli/ruby-version))
+#+END_SRC
+
+Ruby executables are installed in =~/.gem/ruby/<version>/bin=. This ensures that
+that's included in the path. In particular, we want that directory to be
+included because it contains the =xmpfilter= executable, which is used below.
+
+#+BEGIN_SRC emacs-lisp
+  (oookli/append-to-path (format "~/.gem/ruby/%s/bin" oookli/ruby-version))
+#+END_SRC
+
+Running tests from within Emacs is awfully convenient.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rspec-mode)
+#+END_SRC
+
+I like running Rubocop through Flycheck, but it also invokes Reek, which I've
+found to be more of a nuisance than a help. This disables the =ruby-reek=
+checker:
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default flycheck-disabled-checkers '(ruby-reek))
+#+END_SRC
+
+When assigning the result of a conditional, I like to align the expression to
+match the beginning of the statement instead of indenting it all the way to the
+=if=.
+
+#+BEGIN_SRC emacs-lisp
+  (setq ruby-align-to-stmt-keywords '(def if))
+#+END_SRC
+
+Ruby method comments are often formatted with Yard.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yard-mode)
+#+END_SRC
+
+Insert =end= keywords automatically when I start to define a method, class,
+module, or block.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ruby-end)
+#+END_SRC
+
+Install and enable =projectile-rails= mode in all Rail-related buffers.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile-rails
+    :config
+    (projectile-rails-global-mode))
+#+END_SRC
+
+There are a bunch of things I'd like to do when I open a Ruby buffer:
+
+- I don't want to insert an encoding comment.
+- I want to enable =yas=, =rspec=, =yard=, =flycheck=, and =projectile-rails=.
+- I'd like my RSpec tests to be run in a random order, and I'd like the output
+  to be colored.
+- Chruby should automatically determine the correct version for me.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'ruby-mode-hook
+            (lambda ()
+              (setq ruby-insert-encoding-magic-comment nil)
+              (yas-minor-mode)
+              (rspec-mode)
+              (yard-mode)
+              (flycheck-mode)
+              (local-set-key "\r" 'newline-and-indent)
+              (setq rspec-command-options "--color --order random")
+              (chruby-use-corresponding)))
+#+END_SRC
+
+I associate =ruby-mode= with Gemfiles, gemspecs, Rakefiles, and Vagrantfiles.
+
+#+BEGIN_SRC emacs-lisp
+  (oookli/add-auto-mode
+   'ruby-mode
+   "\\Gemfile$"
+   "\\.rake$"
+   "\\.gemspec$"
+   "\\Guardfile$"
+   "\\Rakefile$"
+   "\\Vagrantfile$"
+   "\\Vagrantfile.local$")
+#+END_SRC
+
+When running RSpec tests I'd like to scroll to the first error.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'rspec-compilation-mode-hook
+            (lambda ()
+              (make-local-variable 'compilation-scroll-output)
+              (setq compilation-scroll-output 'first-error)))
+#+END_SRC
+** =sh=
+
+Indent with 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'sh-mode-hook
+            (lambda ()
+              (setq sh-basic-offset 2
+                    sh-indentation 2)))
+** =web-mode=
+
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode)
+#+END_SRC
+
+If I'm in =web-mode=, I'd like to:
+
+- Color color-related words with =rainbow-mode=.
+- Still be able to run RSpec tests from =web-mode= buffers.
+- Indent everything with 2 spaces.
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'web-mode-hook
+            (lambda ()
+              (rainbow-mode)
+              (rspec-mode)
+              (setq web-mode-markup-indent-offset 2)))
+#+END_SRC
+
+Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
+
+#+BEGIN_SRC emacs-lisp
+  (oookli/add-auto-mode
+   'web-mode
+   "\\.erb$"
+   "\\.html$"
+   "\\.php$"
+   "\\.rhtml$")
+#+END_SRC
+
+** YAML
+If I'm editing YAML I'm usually in a Rails project. I'd like to be able to run
+the tests from any buffer.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+	:config
+		(add-hook 'yaml-mode-hook 'rspec-mode))
+#+END_SRC
+* Abo-abo
+** Configure =ivy= and =counsel=
+
+I use =ivy= and =counsel= as my completion framework.
+
+This configuration:
+
+- Uses =counsel-M-x= for command completion,
+- Replaces =isearch= with =swiper=,
+- Uses =smex= to maintain history,
+- Enables fuzzy matching everywhere except swiper (where it's thoroughly
+  unhelpful), and
+- Includes recent files in the switch buffer.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :bind
+    ("M-x" . 'counsel-M-x)
+    ("C-s" . 'swiper)
+
+    :config
+    (use-package flx)
+    (use-package smex)
+
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-count-format "(%d/%d) ")
+    (setq ivy-initial-inputs-alist nil)
+    (setq ivy-re-builders-alist
+          '((swiper . ivy--regex-plus)
+            (t . ivy--regex-fuzzy)))
+		:general
+		(general-def :keymaps '(ivy-occur-mode-map ivy-occur-grep-mode-map ivy-minibuffer-map)
+		"C-j" 'ivy-next-line
+		"C-k" 'ivy-previous-line)
+		(tyrant-def "\\" 'ivy-switch-buffer))
+#+END_SRC
+* Mass editing of =grep= results
+I like the idea of mass editing =grep= results the same way I can edit filenames
+in =dired=. These keybindings allow me to use =C-x C-q= to start editing =grep=
+results and =C-c C-c= to stop, just like in =dired=.
+
+#+BEGIN_SRC emacs-lisp
+	(use-package wgrep
+	:config
+	(wgrep-change-to-wgrep-mode))
+
+	;; (eval-after-load 'grep
+	;;   '(define-key grep-mode-map
+	;;     (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode))
+
+	;; (eval-after-load 'wgrep
+	;;   '(define-key grep-mode-map
+	;;     (kbd "C-c C-c") 'wgrep-finish-edit))
+
+	;; (setq wgrep-auto-save-buffer t)
+#+END_SRC
+* Terminal
+I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
+
+#+BEGIN_SRC emacs-lisp
+	(use-package multi-term
+	:ensure t
+	:config
+		(setq multi-term-program "/bin/zsh")
+		;; (setq multi-term-program-switches "--login")
+		(evil-set-initial-state 'term-mode 'emacs)
+	:general
+		(tyrant-def
+				"t" 'multi-term))
+#+END_SRC
+
+I add a bunch of hooks to =term-mode=:
+
+- I'd like links (URLs, etc) to be clickable.
+- Yanking in =term-mode= doesn't quite work. The text from the paste appears in
+  the buffer but isn't sent to the shell process. This correctly binds =C-y= and
+  middle-click to yank the way we'd expect.
+- I bind =M-o= to quickly change windows. I'd like that in terminals, too.
+- I don't want to perform =yasnippet= expansion when tab-completing.
+
+#+BEGIN_SRC emacs-lisp
+  (defun oookli/term-paste (&optional string)
+    (interactive)
+    (process-send-string
+     (get-buffer-process (current-buffer))
+     (if string string (current-kill 0))))
+
+  (add-hook 'term-mode-hook
+            (lambda ()
+              (goto-address-mode)
+              (define-key term-raw-map (kbd "C-y") 'oookli/term-paste)
+              (define-key term-raw-map (kbd "<mouse-2>") 'oookli/term-paste)
+              (define-key term-raw-map (kbd "M-o") 'other-window)
+              (setq yas-dont-activate t)))
+#+END_SRC
+* Set custom keybindings
+Just a few handy functions.
+
+#+BEGIN_SRC emacs-lisp
+	;; (global-set-key (kbd "C-w") 'backward-kill-word)
+	(global-set-key (kbd "M-o") 'other-window)
+#+END_SRC
+
+# Remap when working in terminal Emacs.
+
+# #+BEGIN_SRC emacs-lisp
+#   (define-key input-decode-map "\e[1;2A" [S-up])
+# #+END_SRC

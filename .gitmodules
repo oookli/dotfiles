@@ -1,0 +1,6 @@
+[submodule "emacs/sendible-default"]
+	path = emacs/sendible-default
+	url = https://github.com/hrs/sensible-defaults.el
+[submodule "emacs/sensible-defaults"]
+	path = emacs/sensible-defaults
+	url = https://github.com/hrs/sensible-defaults.el

@@ -1,1 +1,1 @@
-("~/code/dotfiles/" "~/Sites/vnv-console/")
+("~/code/dotfiles/" "~/Sites/mi-amp/" "~/code/dotfiles/emacs/sensible-defaults/")

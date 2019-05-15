@@ -1,0 +1,4 @@
+cd ../../../../
+rspec ./spec/application/amp/configs/generate_command_spec.rb 
+exit
+exit

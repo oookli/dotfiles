@@ -591,6 +591,7 @@ endfor
 nnoremap <leader>cpt :CtrlPTag<cr>
 nnoremap <c-]> :CtrlPtjump<cr>
 vnoremap <c-]> :CtrlPtjumpVisual<cr>
-nnoremap <leader>t :CtrlPSmartTabs<CR>
+map <Leader>t :call RunCurrentSpecFile()<CR>
+" nnoremap <leader>t :CtrlPSmartTabs<CR>
 
 vmap <Leader>et :call I18nTranslateString()<CR>
