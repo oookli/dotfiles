@@ -341,10 +341,11 @@ version control. That's all in here.
 Use =company-mode= everywhere.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package company
-    :hook (add-hook 'after-init-hook 'global-company-mode)
-    :general
-    (general-def "M-/" 'company-complete-common))
+	(use-package company
+		:hook (add-hook 'after-init-hook 'global-company-mode)
+		:general
+		;; (general-def "M-/" 'company-complete-common)
+		(general-def 'insert "TAB" 'company-complete-common))
 #+END_SRC
 ** Dumb-jump
 
@@ -408,7 +409,8 @@ project root (if I'm not in a "real" project).
 	  (projectile-global-mode)
 		:general
 		('normal '(override-global-map ag-mode-map rspec-mode-map)
-				"C-p" 'projectile-find-file)
+				"C-p" 'projectile-find-file
+				"C-S-p" 'projectile-switch-project)
 		(tyrant-def
 			","  'projectile-ag))
 
@@ -753,19 +755,17 @@ in =dired=. These keybindings allow me to use =C-x C-q= to start editing =grep=
 results and =C-c C-c= to stop, just like in =dired=.
 
 #+BEGIN_SRC emacs-lisp
-	(use-package wgrep
-	:config
-	(wgrep-change-to-wgrep-mode))
+		(use-package wgrep)
 
-	;; (eval-after-load 'grep
-	;;   '(define-key grep-mode-map
-	;;     (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode))
+		(eval-after-load 'grep
+		'(define-key grep-mode-map
+				(kbd "C-x C-q") 'wgrep-change-to-wgrep-mode))
 
-	;; (eval-after-load 'wgrep
-	;;   '(define-key grep-mode-map
-	;;     (kbd "C-c C-c") 'wgrep-finish-edit))
+		(eval-after-load 'wgrep
+		'(define-key grep-mode-map
+				(kbd "C-c C-c") 'wgrep-finish-edit))
 
-	;; (setq wgrep-auto-save-buffer t)
+		(setq wgrep-auto-save-buffer t)
 #+END_SRC
 * Terminal
 I use =multi-term= to manage my shell sessions. It's bound to =C-c t=.
@@ -819,3 +819,12 @@ Just a few handy functions.
 # #+BEGIN_SRC emacs-lisp
 #   (define-key input-decode-map "\e[1;2A" [S-up])
 # #+END_SRC
+* Ruby
+
+#+BEGIN_SRC emacs-lisp
+	(use-package robe
+		:config
+		(global-robe-mode)
+		(eval-after-load 'company '(push 'company-robe company-backends)))
+
+#+END_SRC

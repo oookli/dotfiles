@@ -7,7 +7,9 @@
  '(custom-safe-themes
 	 (quote
 		("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
- '(package-selected-packages (quote (moody evil general which-key use-package))))
+ '(package-selected-packages
+	 (quote
+		(sublimity minimap minimap-mode robe robe-mode moody evil general which-key use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

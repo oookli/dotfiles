@@ -231,9 +231,10 @@
   (setq ag-reuse-window t))
 
 (use-package company
-  :hook (add-hook 'after-init-hook 'global-company-mode)
-  :general
-  (general-def "M-/" 'company-complete-common))
+	:hook (add-hook 'after-init-hook 'global-company-mode)
+	:general
+	;; (general-def "M-/" 'company-complete-common)
+	(general-def 'insert "TAB" 'company-complete-common))
 
 (use-package dumb-jump
   :config
@@ -264,7 +265,8 @@
   (projectile-global-mode)
 	:general
 	('normal '(override-global-map ag-mode-map rspec-mode-map)
-			"C-p" 'projectile-find-file)
+			"C-p" 'projectile-find-file
+			"C-S-p" 'projectile-switch-project)
 	(tyrant-def
 		","  'projectile-ag))
 
@@ -417,19 +419,17 @@
 	      "C-k" 'ivy-previous-line)
 	      (tyrant-def "\\" 'ivy-switch-buffer))
 
-(use-package wgrep
-:config
-(wgrep-change-to-wgrep-mode))
+(use-package wgrep)
 
-;; (eval-after-load 'grep
-;;   '(define-key grep-mode-map
-;;     (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode))
+(eval-after-load 'grep
+'(define-key grep-mode-map
+		(kbd "C-x C-q") 'wgrep-change-to-wgrep-mode))
 
-;; (eval-after-load 'wgrep
-;;   '(define-key grep-mode-map
-;;     (kbd "C-c C-c") 'wgrep-finish-edit))
+(eval-after-load 'wgrep
+'(define-key grep-mode-map
+		(kbd "C-c C-c") 'wgrep-finish-edit))
 
-;; (setq wgrep-auto-save-buffer t)
+(setq wgrep-auto-save-buffer t)
 
 (use-package multi-term
 :ensure t
@@ -457,3 +457,8 @@
 
 ;; (global-set-key (kbd "C-w") 'backward-kill-word)
 (global-set-key (kbd "M-o") 'other-window)
+
+(use-package robe
+	:config
+	(global-robe-mode)
+	(eval-after-load 'company '(push 'company-robe company-backends)))

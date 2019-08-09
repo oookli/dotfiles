@@ -110,7 +110,7 @@ bindkey '^ ' autosuggest-accept
 # MYSQL=/usr/local/mysql/bin
 # export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
 
-export PATH=$PATH:/usr/local/bin:/usr/local/sbin:$MYSQL:/usr/local/heroku/bin:/bin:/sbin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin:$HOME/usr:/Library/Frameworks/JRuby.framework/Versions/Current/bin:/usr/local/opt/postgresql@9.6/bin:/usr/local:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/node@8/bin:/usr/local/opt/ruby/bin
+export PATH=$PATH:/usr/local/bin:/usr/local/sbin:$MYSQL:/usr/local/heroku/bin:/bin:/sbin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin:$HOME/usr:/Library/Frameworks/JRuby.framework/Versions/Current/bin:/usr/local/opt/postgresql@9.6/bin:/usr/local:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/node@8/bin:/usr/local/opt/ruby/bin:/usr/local/opt/openssl/bin
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -137,4 +137,9 @@ export CPPFLAGS="-I/usr/local/opt/node@8/include"
 export LDFLAGS="-L/usr/local/opt/ruby/lib"
 export CPPFLAGS="-I/usr/local/opt/ruby/include"
 
+export LDFLAGS="-L/usr/local/opt/openssl/lib"
+export CPPFLAGS="-I/usr/local/opt/openssl/include"
+
 eval "$(rbenv init - zsh)"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
