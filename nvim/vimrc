@@ -141,7 +141,7 @@ nnoremap <silent> <leader><leader>  <esc>:w<cr>
 " tmux runner
 let g:vtrusevtrmaps = 1
 let g:vtrgitcduponopen = 0
-let g:vtrpercentage = 30
+let g:vtrpercentage = 50
 
 " nmap <leader>fs :vtrflushcommand<cr>:vtrsendcommandtorunner<cr>
 " nmap <c-f> :vtrsendlinestorunner<cr>
@@ -162,7 +162,7 @@ let g:vtrpercentage = 30
 
 let g:spec_runner_dispatcher = "vtrsendcommand! be {command}"
 
-map <leader>rt <plug>runfocusedspec
+" map <leader>rt <plug>runfocusedspec
 " map <leader>lt <plug>runmostrecentspec# clipboard
 
 " macos vs linux clipboard
