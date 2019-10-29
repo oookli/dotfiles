@@ -1,1 +1,0 @@
-("~/code/dotfiles/" "~/Sites/mi-amp/" "~/code/dotfiles/emacs/sensible-defaults/")
