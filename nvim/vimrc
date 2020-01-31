@@ -70,6 +70,7 @@ Plug 'Chiel92/vim-autoformat'
 " Plug 'w0rp/ale'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'rizzatti/dash.vim'
 
 call plug#end()
 
@@ -403,6 +404,7 @@ cmap w!! %!sudo tee > /dev/null %
 " "paste the contents of the buffer file
 " nmap <Leader>p :r ~/.vbuf<CR>
 nnoremap <Leader>, :CtrlSF<Space>
+nmap <silent> <Leader>d <Plug>DashGlobalSearch
 
 " Automatically removing all trailing whitespace
 autocmd BufWritePre * :%s/\s\+$//e
