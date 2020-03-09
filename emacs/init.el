@@ -1,90 +1,242 @@
-;;; -*- lexical-binding: t -*-
-
-(defun tangle-init ()
-  "If the current buffer is 'init.org' the code-blocks are
-tangled, and the tangled file is compiled."
-  (when (equal (buffer-file-name)
-               (expand-file-name (concat user-emacs-directory "init.org")))
-    ;; Avoid running hooks when tangling.
-    (let ((prog-mode-hook nil))
-      (org-babel-tangle)
-      (byte-compile-file (concat user-emacs-directory "init.el")))))
-
-(add-hook 'after-save-hook 'tangle-init)
-
-(eval-and-compile
-  (setq load-prefer-newer t
-        package-user-dir "~/.emacs.d/elpa"
-        package--init-file-ensured t
-        package-enable-at-startup nil)
-
-  (unless (file-directory-p package-user-dir)
-    (make-directory package-user-dir t))
-
-  (setq load-path (append load-path (directory-files package-user-dir t "^[^.]" t))))
+;; Helpful links:
+;;
+;; - https://sam217pa.github.io/2016/09/02/how-to-build-your-own-spacemacs/
+;; - https://dev.to/huytd/emacs-from-scratch-1cg6
+;; - https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/#fnref:2
 
 
-(eval-when-compile
-  (require 'package)
-  ;; tells emacs not to load any packages before starting up
-  ;; the following lines tell emacs where on the internet to look up
-  ;; for new packages.
-  (setq package-archives '(("melpa"        . "https://melpa.org/packages/")
-                           ("melpa-stable" . "http://stable.melpa.org/packages/")
-                           ("elpa"         . "https://elpa.gnu.org/packages/")
-                           ("repo-org"     . "https://orgmode.org/elpa/")
-                           ("org"          . "http://orgmode.org/elpa/")
-                           ("marmalade"    . "http://marmalade-repo.org/packages/")
-                           ("elpy"         . "https://jorgenschaefer.github.io/packages/")))
-  ;; (package-initialize)
-  (unless package--initialized (package-initialize t))
+(setq delete-old-versions -1 )
+(setq inhibit-startup-screen t )
+(setq ring-bell-function 'ignore )
+(setq coding-system-for-read 'utf-8 )
+(setq coding-system-for-write 'utf-8 )
+(setq sentence-end-double-space nil)
+(setq default-fill-column 80)
+(setq initial-scratch-message "")
 
-  ;; Bootstrap `use-package'
-  (unless (package-installed-p 'use-package) ; unless it is already installed
-    (package-refresh-contents) ; updage packages archive
-    (package-install 'use-package)) ; and install the most recent version of use-package
+(setq-default mode-line-format nil)
 
-  (require 'use-package)
-  (setq use-package-always-ensure t))
+(global-auto-revert-mode t)
+(electric-pair-mode)
 
-(setq mac-right-command-modifier 'super)
-(setq mac-option-modifier 'meta)
-(setq mac-left-option-modifier 'meta)
-(setq mac-right-option-modifier 'meta)
-(setq mac-command-modifier 'super)
 
-(setq mac-right-option-modifier 'nil)
+;; Package Management
+(require 'package)
+(setq package-enable-at-startup nil)
+(setq package-archives '(("org"       . "http://orgmode.org/elpa/")
+			 ("gnu"       . "http://elpa.gnu.org/packages/")
+			 ("melpa"     . "https://melpa.org/packages/")))
+(package-initialize)
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
 
-(set-face-background 'show-paren-match "grey84")
-(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
-(show-paren-mode)
+;; Path management
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
-;; (global-visual-line-mode 1)
-(setq org-startup-truncated nil)
-
-(setq column-number-mode t) ;; show columns in addition to rows in mode line
-
-(setq-default frame-title-format "%b (%f)")
-
-(setq-default indent-tabs-mode nil)
-(setq tab-width 2)
-(setq js-indent-level 2)
-(setq css-indent-offset 2)
-(setq-default c-basic-offset 2)
-(setq c-basic-offset 2)
-(setq-default tab-width 2)
-(setq-default c-basic-indent 2)
-
-(blink-cursor-mode 0)
-
-(global-visual-line-mode t)
-
+;; Vim mode
 (use-package evil
-  :hook (after-init . evil-mode)
-  :init
+  :ensure t
+  :config
+  (evil-mode 1)
   (setq
     evil-want-C-u-scroll t
     ;; don't move back the cursor one position when exiting insert mode
     evil-move-cursor-back nil)
   :config
-    (setq doc-view-continuous t)
+    (setq doc-view-continuous t))
+
+;; Minimal UI
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
+
+;; Font
+(add-to-list 'default-frame-alist '(font . "JetBrains Mono-12" ))
+(set-face-attribute 'default t :font "JetBrains Mono-12" )
+
+;; Themes
+(use-package jbeans-theme
+  :ensure t
+  :config
+  (load-theme 'jbeans t))
+
+;; Which Key
+(use-package which-key
+  :ensure t
+  :init
+  (setq which-key-separator " ")
+  (setq which-key-prefix-prefix "+")
+  :config
+  (which-key-mode))
+
+;; Javascript
+(use-package js2-mode
+  :ensure t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
+(use-package add-node-modules-path
+  :ensure t)
+(use-package prettier-js
+  :ensure t
+  :init
+  (require 'prettier-js)
+  (add-hook 'js2-mode-hook 'add-node-modules-path)
+  (add-hook 'js2-mode-hook 'prettier-js-mode)
+  (add-hook 'web-mode-hook 'add-node-modules-path)
+  (add-hook 'web-mode-hook 'prettier-js-mode))
+
+;; Multi-Term
+(use-package multi-term
+  :ensure t
+  :init
+  (setq multi-term-program "/bin/zsh"))
+
+;; Ivy & friends
+(use-package ivy
+  :ensure t)
+(use-package counsel
+  :ensure t)
+
+;; Ranger
+(use-package ranger
+  :ensure t
+  :init
+  (setq ranger-show-hidden t))
+
+;; Code commenting
+(use-package evil-nerd-commenter :ensure t)
+
+;; Project management
+(use-package projectile
+  :ensure t
+  :init
+  (setq projectile-completion-system 'ivy)
+  :config
+  (projectile-mode))
+(use-package counsel-projectile
+  :ensure t
+  :config
+  (counsel-projectile-mode))
+
+;; Workspaces
+(use-package perspective
+  :ensure t
+  :config
+  (persp-mode))
+(use-package persp-projectile
+  :ensure t)
+
+;; Surround
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+
+;; Edit this config
+(defun edit-emacs-configuration ()
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+
+(defun toggle-buffers ()
+  (interactive)
+  (switch-to-buffer nil))
+
+
+;;; Ace-window
+(use-package ace-window
+  :ensure t
+  :commands (ace-window)
+  :config
+  (setq aw-keys '(?g ?h ?j ?k ?l ?a ?s ?d ?f)
+        aw-background t))
+
+;; Keybindings
+(use-package key-chord
+  :ensure t
+  :config
+  (key-chord-mode 1)
+  (key-chord-define evil-insert-state-map "kj" 'evil-normal-state))
+(use-package general
+  :ensure t
+  :config
+  (general-define-key "M-x" 'counsel-M-x)
+  (general-define-key
+   :states '(normal visual emacs)
+   "/" 'swiper
+   "gcc" 'evilnc-comment-or-uncomment-lines)
+  (general-define-key
+   :states '(normal visual)
+   "C-u" 'scroll-down-command
+   "C-d" 'scroll-up-command)
+  (general-define-key
+   :states '(normal visual insert emacs)
+   :prefix "SPC"
+   :non-normal-prefix "C-SPC"
+   "SPC"  'save-buffer
+   "'"   'multi-term
+   "/"   'counsel-ag
+   ":"   'counsel-M-x
+   "."   'edit-emacs-configuration
+   "TAB" 'toggle-buffers
+
+   "p" 'projectile-command-map
+   "pp" 'projectile-persp-switch-project
+   "pf" 'counsel-projectile
+   "pl" 'test-counsel-describe-function
+
+   "b" '(:ignore t :which-key "Buffers")
+   "bb"  'ivy-switch-buffer
+
+   "w" 'ace-window
+   ;; "w" '(:ignore t :which-key "Window")
+   ;; "wl"  'windmove-right
+   ;; "wh"  'windmove-left
+   ;; "wk"  'windmove-up
+   ;; "wj"  'windmove-down
+   ;; "w/"  'split-window-right
+   ;; "w-"  'split-window-below
+   ;; "wx"  'delete-window
+
+   "a" '(:ignore t :which-key "Applications")
+   "ar" 'ranger
+   "ad" 'deer
+
+   "s" '(:ignore t :which-key "Search")
+   "sc" 'evil-ex-nohighlight
+   "sl" 'ivy-resume
+
+   "t" '(:ignore t :which-key "Toggles")
+   "tn" 'display-line-numbers-mode
+   "tl" 'toggle-truncate-lines
+
+   "T" 'counsel-load-theme
+
+   "x" '(:ignore t :which-key "Text")
+   "xl" '(:ignore t :which-key "Lines")
+   "xls" 'sort-lines
+
+   "g" '(:ignore t :which-key "Code?")
+   "gc" 'evilnc-comment-or-uncomment-lines
+   ))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (olivetti which-key use-package ranger prettier-js multi-term js2-mode general exec-path-from-shell evil doom-themes counsel-projectile))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
