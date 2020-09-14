@@ -378,7 +378,7 @@ nnoremap <leader>fef :normal! gg=G``<CR>
 
 map <Leader>nr :NERDTreeFind<CR>
 nmap <C-a> :NERDTreeToggle<CR>
-let  ERDTreeQuitOnOpen=1
+let NERDTreeQuitOnOpen=1
 let NERDTreeIgnore = ['\.pyc$']
 " prevent copy filename from NerdTree with ^G symbol
 let NERDTreeNodeDelimiter="\u00a0"
@@ -663,6 +663,11 @@ function! s:tags_sink(line)
   let &magic = magic
 endfunction
 
+autocmd BufWritePre *.js Neoformat
+autocmd BufWritePre *.scss Neoformat
+let g:neoformat_try_formatprg = 1
+let g:neoformat_only_msg_on_error = 1
+
 " autocmd! FileType fzf tnoremap <buffer> <esc> <C-Space>
 
 
@@ -674,45 +679,3 @@ endfunction
 "       \ 'jsxStatment' : '// %s',
 "       \ 'jsxRegion' : '{/*%s*/}',
 " \}
-
-" let g:neoformat_try_formatprg = 1
-
-" augroup NeoformatAutoFormat
-"     autocmd!
-"     autocmd FileType javascript setlocal formatprg=prettier\
-"                                              \--stdin\
-"                                              \--print-width\ 80\
-"                                              \--single-quote\
-"                                              \--trailing-comma\ es5
-"     autocmd BufWritePre *.js Neoformat
-" augroup END
-
-" augroup NeoformatAutoFormat
-"     autocmd!
-"     autocmd FileType javascript,javascript.jsx setlocal formatprg=prettier\
-"                                                             \--stdin\
-"                                                             \--print-width\ 80\
-"                                                             \--single-quote\
-"                                                             \--trailing-comma\ es5
-"     autocmd BufWritePre *.js,*.jsx Neoformat
-" augroup END
-
-" ale
-" let g:ale_linters = {
-"       \  'javascript': ['eslint'],
-"             \ }
-
-" let g:ale_fixers = {
-"       \  'javascript': ['prettier', 'eslint'],
-"       \  'jsx': ['prettier', 'eslint'],
-"       \  'flow': ['prettier'],
-"       \  'typescript': ['prettier'],
-"       \  'css': ['prettier'],
-"       \  'less': ['prettier'],
-"       \  'scss': ['prettier'],
-"       \  'json': ['prettier'],
-"       \  'graphql': ['prettier'],
-"       \  'markdown': ['prettier'],
-"             \ }
-
-" let g:ale_javascript_prettier_options = '--single-quote --trailing-comma es5'
