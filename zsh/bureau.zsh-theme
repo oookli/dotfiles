@@ -105,6 +105,10 @@ bureau_precmd () {
   print -rP "$_1LEFT$_1SPACES$_1RIGHT"
 }
 
+MODE_INDICATOR="%{$fg_bold[yellow]%} [% NORMAL]%  %{$reset_color%}"
+VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
+VI_MODE_SET_CURSOR=false
+
 setopt prompt_subst
 PROMPT='> $_LIBERTY '
 RPROMPT='$(vi_mode_prompt_info) $(nvm_prompt_info) $(bureau_git_prompt)'

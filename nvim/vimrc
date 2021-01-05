@@ -68,6 +68,11 @@ Plug 'junegunn/fzf.vim'
 Plug 'rizzatti/dash.vim'
 Plug 'ludovicchabant/vim-gutentags'
 
+Plug 'dart-lang/dart-vim-plugin'
+Plug 'natebosch/vim-lsc'
+Plug 'natebosch/vim-lsc-dart'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
 call plug#end()
 
 filetype plugin indent on
@@ -230,7 +235,20 @@ let g:vim_json_syntax_conceal = 0
 
 let g:vim_markdown_folding_disabled = 1
 
-let g:neomake_javascript_eslint_exe = $PWD .'/node_modules/.bin/eslint'
+function! NeomakeESlintChecker()
+  for folder in ['', 'frontend', 'frontend_auto', 'frontend_home']
+    let l:eslint = $PWD . '/' . folder . '/node_modules/.bin/eslint'
+
+    if executable(l:eslint)
+      break
+    endif
+  endfor
+
+  let b:neomake_javascript_eslint_exe = l:eslint
+endfunction
+
+autocmd FileType javascript :call NeomakeESlintChecker()
+
 let g:neomake_javascript_enabled_makers = ['eslint']
 let g:neomake_jsx_enabled_makers = ['eslint']
 let g:neomake_haml_enabled_makers = ['hamllint']
@@ -679,3 +697,12 @@ let g:neoformat_only_msg_on_error = 1
 "       \ 'jsxStatment' : '// %s',
 "       \ 'jsxRegion' : '{/*%s*/}',
 " \}
+
+let g:lsc_auto_map = v:true
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+inoremap <expr> <Tab> pumvisible() ? coc#_select_confirm() : "<Tab>"
