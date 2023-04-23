@@ -110,7 +110,7 @@ bindkey '^ ' autosuggest-accept
 # MYSQL=/usr/local/mysql/bin
 # export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
 
-export PATH=$PATH:/usr/local/bin:/usr/local/sbin:$MYSQL:/usr/local/heroku/bin:/bin:/sbin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin:$HOME/usr:/Library/Frameworks/JRuby.framework/Versions/Current/bin:/usr/local/opt/postgresql@9.6/bin:/usr/local:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/node/bin:/usr/local/opt/ruby/bin:/usr/local/opt/openssl/bin:~/Library/Python/2.7/bin:~/Library/Python/3.8/bin
+export PATH=$PATH:/usr/local/bin:/usr/local/sbin:$MYSQL:/usr/local/heroku/bin:/bin:/sbin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin:$HOME/usr:/Library/Frameworks/JRuby.framework/Versions/Current/bin:/opt/homebrew/opt/postgresql@13/bin:/usr/local:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/node/bin:/usr/local/opt/ruby/bin:/usr/local/opt/openssl/bin:~/Library/Python/2.7/bin:~/Library/Python/3.8/bin
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -132,4 +132,33 @@ export CPPFLAGS="-I/usr/local/opt/openssl/include"
 eval "$(rbenv init - zsh)"
 eval "$(zoxide init zsh)"
 
+export NPM_TOKEN="ce8452f1-ff19-4509-848b-67c77eaec0f2"
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Created by `pipx` on 2022-04-19 18:24:10
+export PATH="$PATH:/Users/oookli/.local/bin"
+# AWS
+export AWS_DEFAULT_SSO_REGION=eu-central-1
+export AWS_DEFAULT_SSO_START_URL=https://panion.awsapps.com/start
+export AWS_PROFILE=IlkoSandbox.SandBoxAdminFullAccess
+
+export ABB_DEV_HOSTED_ZONE_NAME=ilko.dev.plan.panion.cloud
+export ABB_DEV_HOSTED_ZONE_ID=Z05065892C6YYITQ600PV
+
+# pnpm
+export PNPM_HOME="/Users/oookli/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+# pnpm end
+
+# Created by `pipx` on 2022-10-26 06:50:42
+export PATH="$PATH:/Users/oookli/Library/Python/3.10/bin"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/oookli/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/oookli/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/oookli/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/oookli/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+alias ps_exec="unset AWS_VAULT && aws-vault exec"
+alias ps_ff='ps_exec psandbox'

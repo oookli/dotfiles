@@ -72,6 +72,7 @@ Plug 'dart-lang/dart-vim-plugin'
 Plug 'natebosch/vim-lsc'
 Plug 'natebosch/vim-lsc-dart'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'github/copilot.vim'
 
 call plug#end()
 
@@ -253,7 +254,8 @@ let g:neomake_javascript_enabled_makers = ['eslint']
 let g:neomake_jsx_enabled_makers = ['eslint']
 let g:neomake_haml_enabled_makers = ['hamllint']
 let g:neomake_ruby_enabled_makers = ['rubocop', 'mri']
-let g:neomake_ruby_enabled_makers = ['rubocop', 'mri']
+let g:neomake_ruby_rubocop_exe = 'bundle'
+let g:neomake_ruby_rubocop_args = ['exec', 'rubocop']
 " let g:syntastic_erlang_checkers = ['syntaxerl']
 
 autocmd! BufWritePost * Neomake
@@ -332,8 +334,8 @@ nmap Y y$
 nnoremap 0 ^
 
 " Leader-; to enter command mode. No more holding shift!
-nnoremap <leader>; :
-vnoremap <leader>; :
+" nnoremap <leader>; :
+" vnoremap <leader>; :
 
 " Quickly open a second window to view files side by side
 nmap <LEADER>vn :vsplit<CR>
@@ -416,7 +418,11 @@ cmap w!! %!sudo tee > /dev/null %
 " "paste the contents of the buffer file
 " nmap <Leader>p :r ~/.vbuf<CR>
 nnoremap <Leader>, :CtrlSF<Space>
+nnoremap <leader>; :CtrlSF -R -I<Space>
 nmap <silent> <Leader>d <Plug>DashGlobalSearch
+let g:ctrlsf_extra_backend_args = {
+\ 'ag': '--ignore node_modules --ignore dist'
+\ }
 
 " Automatically removing all trailing whitespace
 autocmd BufWritePre * :%s/\s\+$//e
@@ -589,8 +595,11 @@ let g:fzf_files_options =
   \ '--reverse ' .
   \ '--preview "(coderay {} || cat {}) 2> /dev/null | head -'.&lines.'"'
 
+let g:fzf_buffers_jump = 1
+let g:fzf_history_dir = '~/.local/share/fzf-history'
 let $FZF_DEFAULT_COMMAND = 'ag -g "" --hidden'
 nnoremap <silent> <expr> <C-p> (expand('%') =~ 'NERD_tree' ? "\<C-a>\<C-a>" : '').":Files\<CR>"
+nnoremap <silent> <expr> <leader>p (expand('%') =~ 'NERD_tree' ? "\<C-a>\<C-a>" : '').":History\<CR>"
 nnoremap <silent> <expr> <leader>\ (expand('%') =~ 'NERD_tree' ? "\<C-a>\<C-a>" : '').":Buffers\<CR>"
 
 let branch_files_options = { 'source': 'branch_files' }
@@ -682,11 +691,13 @@ function! s:tags_sink(line)
 endfunction
 
 autocmd BufWritePre *.js Neoformat
+autocmd BufWritePre *.ts Neoformat
 autocmd BufWritePre *.tsx Neoformat
 autocmd BufWritePre *.scss Neoformat
 " let g:neoformat_try_formatprg = 1
 let g:neoformat_run_all_formatters = 1
 let g:neoformat_only_msg_on_error = 1
+let g:neoformat_try_node_exe = 1
 
 " autocmd! FileType fzf tnoremap <buffer> <esc> <C-Space>
 
