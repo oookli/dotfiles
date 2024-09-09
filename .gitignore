@@ -1,0 +1,67 @@
+# Swap files
+*.swp
+*.swo
+*.swx
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+*.temp
+*~
+
+# Session files
+Session.vim
+.vim_sessions/*
+.vim/*
+
+# Directory-specific ignores
+.netrwhist
+.tagbar/*
+
+# Vim/Neovim undo, swap, and backup directories
+.vim/undo/*
+.vim/swap/*
+.vim/backup/*
+.vim/view/*
+.nv/undo/*
+.nv/swap/*
+.nv/backup/*
+.nv/view/*
+
+# Cache files
+.cache/
+.cache/*
+.zcompdump*
+
+# Logs
+log/
+*.log
+
+# Python virtual environment
+venv/
+.venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+
+# Ruby/Bundler
+.rvm/
+.bundle/
+vendor/bundle/
+Gemfile.lock
+
+# macOS specific files
+.DS_Store
+
+# System file
+Thumbs.db
+
+# SSH and GPG keys
+.ssh/
+.gnupg/
+
+# Ignore global Vim config files if present
+.vimrc
+.viminfo
