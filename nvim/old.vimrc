@@ -698,6 +698,7 @@ autocmd BufWritePre *.scss Neoformat
 let g:neoformat_run_all_formatters = 1
 let g:neoformat_only_msg_on_error = 1
 let g:neoformat_try_node_exe = 1
+" let g:neoformat_verbose = 1
 
 " autocmd! FileType fzf tnoremap <buffer> <esc> <C-Space>
 

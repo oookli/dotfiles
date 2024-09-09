@@ -162,3 +162,11 @@ if [ -f '/Users/oookli/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . 
 
 alias ps_exec="unset AWS_VAULT && aws-vault exec"
 alias ps_ff='ps_exec psandbox'
+
+export NODE_OPTIONS=--max-old-space-size=8192
+export DESIGN_SYSTEM_CODEARTIFACT_REPOSITORY=design-system-487403093539.d.codeartifact.eu-central-1.amazonaws.com/npm/design-system/
+
+export GOPATH=$HOME/golang
+export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:$GOROOT/bin
+export GPG_TTY=$(tty)
