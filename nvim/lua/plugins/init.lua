@@ -49,6 +49,23 @@ Plug('natebosch/vim-lsc')
 Plug('neoclide/coc.nvim', { branch = 'release' })
 -- Plug('github/copilot.vim')
 
+--- avante.nvim
+-- Deps
+Plug('MeanderingProgrammer/render-markdown.nvim')
+Plug('stevearc/dressing.nvim')
+Plug('nvim-lua/plenary.nvim')
+Plug('MunifTanjim/nui.nvim')
+
+-- Optional Dependencies
+Plug('nvim-tree/nvim-web-devicons') -- or Plug 'echasnovski/mini.icons'
+Plug('HakonHarnes/img-clip.nvim')
+-- Plug('zbirenbaum/copilot.lua')
+
+-- Plugin with build instructions and lazy loading
+-- Plug('yetone/avante.nvim', { branch = 'main', source = 'true', ['do'] = function() vim.fn['avante#build']() end })
+Plug('yetone/avante.nvim', { branch = 'main', ['do'] = function() vim.fn['avante#build']('source=true') end })
+--- /avante.nvim
+
 vim.call('plug#end')
 
 -- Load plugin configurations
@@ -62,3 +79,4 @@ require('plugins.tmux-runner')  -- Load TMUX runner settings
 require('plugins.spec-runner')  -- Load TMUX runner settings
 require('plugins.undotree')  -- Load UndoTree settings
 require('plugins.lsc-and-coc') -- Load vim-lsc and coc.nvim settings
+require('plugins.render-markdown')
