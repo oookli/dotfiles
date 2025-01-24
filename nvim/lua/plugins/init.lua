@@ -48,6 +48,8 @@ Plug('natebosch/vim-lsc')
 -- Plug('natebosch/vim-lsc-dart')
 Plug('neoclide/coc.nvim', { branch = 'release' })
 -- Plug('github/copilot.vim')
+--
+Plug 'terrastruct/d2-vim'
 
 --- avante.nvim
 -- Deps

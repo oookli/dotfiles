@@ -1,0 +1,93 @@
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[[keyboard.bindings]]
+chars = """
+
+"""
+key = "NumpadEnter"
+
+[[keyboard.bindings]]
+chars = "\u001E"
+key = "Key6"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001Bj"
+key = "J"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bk"
+key = "K"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bh"
+key = "H"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001Bl"
+key = "L"
+mods = "Alt"
+
+[[keyboard.bindings]]
+chars = "\u001B "
+key = "Space"
+mods = "Alt"
+
+[colors.bright]
+black = "0x61778c"
+blue = "0x5ec4ff"
+cyan = "0x70e1e8"
+green = "0x8bd49c"
+magenta = "0xe27e8d"
+red = "0xd95468"
+white = "0xdbdbdb"
+yellow = "0xebbf83"
+
+[colors.cursor]
+cursor = "0xffffff"
+text = "0xfafafa"
+
+[colors.normal]
+black = "0x333f4a"
+blue = "0x539afc"
+cyan = "0x70e1e8"
+green = "0x8bd49c"
+magenta = "0xb62d65"
+red = "0xd95468"
+white = "0xb7c5d3"
+
+[colors.primary]
+background = "0x080b0d"
+foreground = "0xffffff"
+
+[font]
+size = 12.0
+
+[font.bold]
+family = "Office Code Pro D"
+style = "Bold"
+
+[font.bold_italic]
+family = "Office Code Pro D"
+style = "Bold Italic"
+
+[font.italic]
+family = "Office Code Pro D"
+style = "Italic"
+
+[font.normal]
+family = "Office Code Pro D"
+style = "Regular"
+
+[font.offset]
+x = 0
+y = 1
+
+[window]
+startup_mode = "Maximized"
+
+[keyboard]
